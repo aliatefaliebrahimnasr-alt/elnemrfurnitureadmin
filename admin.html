@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>إدارة ورشة النمر</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--dark:#201108;--gold:#c98a31;--bg:#f6f2ec;--white:#fff;--text:#2d241e;--muted:#756a63;--line:#e8ddd0;--green:#157347;--red:#b3261e;--shadow:0 12px 34px rgba(42,25,14,.11)}
+*{box-sizing:border-box}body{margin:0;font-family:Cairo,Arial,sans-serif;background:var(--bg);color:var(--text)}button,input,textarea,select{font:inherit}button{cursor:pointer}.hidden{display:none!important}
+.loginWrap{min-height:100vh;display:grid;place-items:center;padding:20px;background:radial-gradient(circle at 30% 20%,#5a361b 0,#24150b 45%,#160c06 100%)}
+.loginCard{width:min(480px,100%);background:#fff;border-radius:24px;padding:28px;box-shadow:0 25px 70px rgba(0,0,0,.28)}
+.loginLogo{text-align:center;font-size:55px}.loginCard h1{text-align:center;margin:5px 0}.loginCard p{text-align:center;color:var(--muted);font-size:13px}
+.field{display:flex;flex-direction:column;gap:5px;margin:12px 0}.field label{font-size:12px;font-weight:800}.field input,.field textarea,.field select{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px;outline:0}.field textarea{min-height:90px;resize:vertical}
+.btn{border:0;border-radius:10px;padding:10px 15px;font-weight:900}.gold{background:var(--gold);color:#fff}.dark{background:var(--dark);color:#fff}.light{background:#efe6db;color:var(--dark)}.red{background:#fbe8e7;color:var(--red)}.green{background:#e5f4eb;color:var(--green)}.wide{width:100%}
+.msg{margin-top:12px;padding:11px;border-radius:9px;font-size:12px;background:#fff5e5;border:1px solid #eed4a6;line-height:1.8}.msg.ok{background:#e7f6ed;border-color:#bde3ca;color:#136b3c}.msg.err{background:#fdeceb;border-color:#efc4c0;color:#9d251e}
+.diag{margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:10px;background:#faf8f5;font-size:11px;color:var(--muted)}.diag b{color:var(--text)}.uid{direction:ltr;word-break:break-all;background:#f3eee7;padding:6px;border-radius:6px;margin-top:5px}
+.app{min-height:100vh}.sidebar{position:fixed;right:0;top:0;bottom:0;width:245px;background:var(--dark);color:#fff;padding:20px 15px;z-index:30}.sideBrand{font-size:19px;font-weight:900;padding:10px 8px 23px;border-bottom:1px solid rgba(255,255,255,.1)}.sideBrand span{color:#e6b45f}.navBtn{width:100%;border:0;background:transparent;color:#d9cdc4;text-align:right;padding:11px 13px;border-radius:9px;margin:4px 0;font-weight:800}.navBtn.active,.navBtn:hover{background:#4a2d18;color:#fff}.sideBottom{position:absolute;right:15px;left:15px;bottom:18px}.main{margin-right:245px}.topbar{height:70px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 25px;position:sticky;top:0;z-index:20}.topbar h2{margin:0;font-size:20px}.content{padding:25px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}.stat{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 6px 20px rgba(0,0,0,.03)}.stat .n{font-size:30px;font-weight:900;color:var(--dark)}.stat small{color:var(--muted)}.panel{background:#fff;border:1px solid var(--line);border-radius:17px;padding:18px;margin-top:18px;box-shadow:0 6px 20px rgba(0,0,0,.03)}.panelHead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}.panelHead h3{margin:0}.tableWrap{overflow:auto}.table{width:100%;border-collapse:collapse;min-width:760px}.table th,.table td{padding:10px;border-bottom:1px solid var(--line);text-align:right;font-size:12px;vertical-align:middle}.table th{color:var(--muted);background:#fcfaf7}.thumb{width:55px;height:48px;object-fit:cover;border-radius:8px;background:#eee}.tag{display:inline-flex;border-radius:99px;padding:3px 8px;font-size:10px;font-weight:900}.tag.on{background:#e4f5e9;color:#157347}.tag.off{background:#f6e6e4;color:#a43229}.rowBtns{display:flex;gap:6px}.rowBtns button{border:0;border-radius:7px;padding:6px 8px;font-size:11px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100;display:none;align-items:center;justify-content:center;padding:15px}.modal.show{display:flex}.box{width:min(700px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:18px;padding:20px}.boxTop{display:flex;justify-content:space-between;align-items:center}.boxTop h3{margin:0}.x{border:0;background:#f0e8dd;border-radius:50%;width:36px;height:36px}.preview{width:100%;height:180px;object-fit:cover;background:#eee;border-radius:12px}.progress{height:7px;background:#eee;border-radius:10px;overflow:hidden;margin:8px 0}.progress i{display:block;height:100%;width:0;background:var(--gold)}.orderCard{border:1px solid var(--line);border-radius:13px;padding:13px;margin:10px 0}.orderTop{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.orderItems{background:#faf7f2;border-radius:9px;padding:8px;margin:8px 0;font-size:12px}.toast{position:fixed;left:20px;bottom:20px;background:var(--dark);color:#fff;padding:10px 15px;border-radius:9px;z-index:200;opacity:0;transform:translateY(10px);transition:.2s}.toast.show{opacity:1;transform:none}.mobileMenu{display:none}
+@media(max-width:950px){.sidebar{transform:translateX(100%);transition:.25s}.sidebar.show{transform:none}.main{margin-right:0}.mobileMenu{display:inline-block}.stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.content{padding:14px}.topbar{padding:0 14px}.stats{grid-template-columns:1fr 1fr;gap:9px}.stat{padding:13px}.stat .n{font-size:23px}.grid2{grid-template-columns:1fr}}
+
+#pDescription{min-height:210px;line-height:1.9;white-space:pre-wrap}
+
+/* ===== Custom El Nemr Logo ===== */
+.loginLogo{
+  width:96px;height:96px;
+  margin:0 auto 12px;
+  border-radius:50%;
+  overflow:hidden;
+  background:#fff;
+  border:3px solid #d2a04a;
+  padding:3px;
+  display:grid;
+  place-items:center;
+  box-shadow:0 10px 26px rgba(124,72,23,.24);
+}
+.loginLogo img{
+  width:100%;height:100%;
+  object-fit:contain;
+  border-radius:50%;
+}
+.sideLogoImg{
+  width:42px;height:42px;
+  border-radius:50%;
+  object-fit:contain;
+  background:#fff;
+  border:2px solid #d1a14d;
+  padding:2px;
+  vertical-align:middle;
+  margin-left:8px;
+}
+
+
+/* ===== ALL LOGOS REPLACED ===== */
+.footerLogoTitle{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.footerLogoImg{
+  width:54px;
+  height:54px;
+  object-fit:contain;
+  border-radius:50%;
+  background:#fff;
+  border:2px solid #d1a14d;
+  padding:2px;
+}
+.pillLogoImg{
+  width:28px;
+  height:28px;
+  object-fit:contain;
+  border-radius:50%;
+  background:#fff;
+  padding:1px;
+  flex:none;
+}
+.inlineLogoImg{
+  width:34px;
+  height:34px;
+  object-fit:contain;
+  border-radius:50%;
+  background:#fff;
+  border:1px solid #d3a24d;
+  padding:1px;
+  vertical-align:middle;
+}
+
+</style>
+</head>
+<body>
+<div class="loginWrap" id="loginWrap">
+  <div class="loginCard">
+    <div class="loginLogo"><img src="assets/elnemr-logo.png" alt="شعار ورشة النمر"></div>
+    <h1>إدارة ورشة النمر</h1>
+    <p>سجّل بالبريد وكلمة المرور التي أضفتها في Firebase Authentication.</p>
+
+    <form id="loginForm">
+      <div class="field"><label>البريد الإلكتروني</label><input id="email" type="email" autocomplete="username" required></div>
+      <div class="field"><label>كلمة المرور</label><input id="password" type="password" autocomplete="current-password" required></div>
+      <button class="btn gold wide" id="loginBtn" type="submit">دخول الأدمن</button>
+    </form>
+
+    <div id="loginMsg" class="msg">لو الحساب هو أول أدمن، الصفحة ستمنحه الصلاحية تلقائيًا بعد تسجيل الدخول.</div>
+    <div class="diag">
+      <div><b>مشروع Firebase:</b> elnemrfurniture</div>
+      <div><b>قاعدة البيانات:</b> elnemrfurniture-default-rtdb</div>
+      <div><b>طريقة الفتح:</b> <span id="protocolText"></span></div>
+      <div><b>اتصال Firebase:</b> <span id="connectionText">جاري الفحص...</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="app hidden" id="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="sideBrand"><img class="sideLogoImg" src="assets/elnemr-logo.png" alt="شعار ورشة النمر"> ورشة <span>النمر</span></div>
+    <button class="navBtn active" data-page="dashboard">📊 الرئيسية</button>
+    <button class="navBtn" data-page="products">🪑 المنتجات</button>
+    <button class="navBtn" data-page="categories">🗂️ الأقسام</button>
+    <button class="navBtn" data-page="orders">📦 الطلبات</button>
+    <button class="navBtn" data-page="settings">⚙️ إعدادات الموقع</button>
+    <div class="sideBottom"><a href="index.html" target="_blank"><button class="btn light wide">فتح الموقع</button></a><button class="btn red wide" style="margin-top:7px" onclick="logout()">تسجيل الخروج</button></div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar"><div><button class="btn light mobileMenu" onclick="toggleSide()">☰</button> <h2 id="pageTitle" style="display:inline">الرئيسية</h2></div><small id="adminEmail"></small></div>
+    <div class="content">
+      <section id="page-dashboard">
+        <div class="stats">
+          <div class="stat"><small>المنتجات</small><div class="n" id="statProducts">0</div></div>
+          <div class="stat"><small>الأقسام</small><div class="n" id="statCategories">0</div></div>
+          <div class="stat"><small>طلبات جديدة</small><div class="n" id="statOrders">0</div></div>
+          <div class="stat"><small>إجمالي الطلبات</small><div class="n" id="statAllOrders">0</div></div>
+        </div>
+        <div class="panel"><div class="panelHead"><h3>إعداد البيانات الأساسية</h3></div><p style="color:var(--muted);font-size:13px">لو الأقسام غير موجودة اضغط الزر لإضافتها بدون حذف أي بيانات.</p><button class="btn gold" onclick="seedDefaults()">إضافة الأقسام الأساسية</button></div>
+        <div class="panel"><div class="panelHead"><h3>آخر الطلبات</h3></div><div id="latestOrders"></div></div>
+      </section>
+
+      <section id="page-products" class="hidden">
+        <div class="panel"><div class="panelHead"><h3>إدارة المنتجات</h3><button class="btn gold" onclick="openProduct()">+ إضافة منتج</button></div>
+          <div class="tableWrap"><table class="table"><thead><tr><th>الصورة</th><th>الاسم</th><th>القسم</th><th>السعر</th><th>الحالة</th><th>التحكم</th></tr></thead><tbody id="productsBody"></tbody></table></div>
+        </div>
+      </section>
+
+      <section id="page-categories" class="hidden">
+        <div class="panel"><div class="panelHead"><h3>الأقسام</h3><button class="btn gold" onclick="openCategory()">+ إضافة قسم</button></div>
+          <div class="tableWrap"><table class="table"><thead><tr><th>الصورة</th><th>القسم</th><th>الترتيب</th><th>الحالة</th><th>التحكم</th></tr></thead><tbody id="categoriesBody"></tbody></table></div>
+        </div>
+      </section>
+
+      <section id="page-orders" class="hidden">
+        <div class="panel"><div class="panelHead"><h3>طلبات العملاء</h3><select id="orderFilter" onchange="renderOrders()" style="padding:8px;border:1px solid var(--line);border-radius:8px"><option value="all">كل الطلبات</option><option value="new">جديد</option><option value="processing">جاري التنفيذ</option><option value="complete">مكتمل</option><option value="cancelled">ملغي</option></select></div><div id="ordersList"></div></div>
+      </section>
+
+      <section id="page-settings" class="hidden">
+        <div class="panel"><div class="panelHead"><h3>إعدادات الموقع</h3></div>
+          <form id="settingsForm">
+            <div class="grid2">
+              <div class="field"><label>اسم الورشة</label><input id="sName"></div>
+              <div class="field"><label>الاسم المختصر</label><input id="sShortName"></div>
+              <div class="field"><label>رقم الهاتف</label><input id="sPhone"></div>
+              <div class="field"><label>رقم واتساب</label><input id="sWhatsapp"></div>
+              <div class="field"><label>العنوان</label><input id="sAddress"></div>
+              <div class="field"><label>ساعات العمل</label><input id="sHours"></div>
+              <div class="field" style="grid-column:1/-1"><label>رابط صورة الواجهة الرئيسية</label><input id="sHeroImage"></div>
+              <div class="field" style="grid-column:1/-1"><label>وصف الواجهة الرئيسية</label><textarea id="sHeroSubtitle"></textarea></div>
+              <div class="field" style="grid-column:1/-1"><label>نبذة عن الورشة</label><textarea id="sAbout"></textarea></div>
+            </div>
+            <button class="btn gold" type="submit">حفظ الإعدادات</button>
+          </form>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<div class="modal" id="productModal"><div class="box"><div class="boxTop"><h3 id="productTitle">إضافة منتج</h3><button class="x" onclick="closeModal('productModal')">✕</button></div>
+<form id="productForm"><input type="hidden" id="pId"><input type="hidden" id="pStoragePath">
+<div class="grid2">
+  <div class="field"><label>اسم المنتج *</label><input id="pName" required></div>
+  <div class="field"><label>القسم *</label><select id="pCategory" required></select></div>
+  <div class="field"><label>السعر</label><input id="pPrice" type="number" min="0"></div>
+  <div class="field"><label>السعر قبل الخصم</label><input id="pOldPrice" type="number" min="0"></div>
+  <div class="field" style="grid-column:1/-1">
+      <label>الوصف الكامل للمنتج</label>
+      <textarea id="pDescription" rows="9" placeholder="اكتب وصف المنتج كاملًا بالتفاصيل والمقاسات والخامات والألوان..."></textarea>
+      <small id="descriptionCounter" style="color:var(--muted);font-size:10px">0 حرف</small>
+    </div>
+  <div class="field" style="grid-column:1/-1"><label>صورة المنتج</label><input id="pFile" type="file" accept="image/*"><div class="progress"><i id="uploadBar"></i></div><input id="pImage" placeholder="أو الصق رابط صورة مباشر"><small style="color:var(--muted)">في V4 يتم ضغط الصورة وحفظها مع المنتج مباشرة في قاعدة البيانات، لذلك لا يعتمد الحفظ على Firebase Storage.</small><img class="preview" id="pPreview" src=""></div>
+  <div class="field"><label>الظهور</label><select id="pVisible"><option value="true">ظاهر</option><option value="false">مخفي</option></select></div>
+  <div class="field"><label>منتج مميز</label><select id="pFeatured"><option value="false">لا</option><option value="true">نعم</option></select></div>
+</div><button class="btn gold wide" type="submit">حفظ المنتج</button></form></div></div>
+
+<div class="modal" id="categoryModal"><div class="box"><div class="boxTop"><h3 id="categoryTitle">إضافة قسم</h3><button class="x" onclick="closeModal('categoryModal')">✕</button></div>
+<form id="categoryForm"><input type="hidden" id="cId">
+<div class="grid2">
+ <div class="field"><label>اسم القسم *</label><input id="cName" required></div>
+ <div class="field"><label>الترتيب</label><input id="cOrder" type="number" value="1"></div>
+ <div class="field" style="grid-column:1/-1"><label>رابط صورة القسم</label><input id="cImage"></div>
+ <div class="field"><label>الحالة</label><select id="cVisible"><option value="true">ظاهر</option><option value="false">مخفي</option></select></div>
+</div><button class="btn gold wide" type="submit">حفظ القسم</button></form></div></div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+firebase.initializeApp(window.ELNEMR_FIREBASE_CONFIG);
+const auth=firebase.auth(),db=firebase.database(),storage=firebase.storage();
+let categories={},products={},orders={},settings={},currentUser=null;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+const safeImg=v=>/^(https?:\/\/|data:image\/)/i.test(String(v||''))?v:'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=300&q=60';
+
+const descInput=document.getElementById('pDescription');
+const descCounter=document.getElementById('descriptionCounter');
+function updateDescriptionCounter(){
+ if(descInput&&descCounter) descCounter.textContent=(descInput.value||'').length.toLocaleString('ar-EG')+' حرف';
+}
+if(descInput){
+ descInput.addEventListener('input',updateDescriptionCounter);
+}
+
+$('protocolText').textContent=location.protocol==='file:'?'ملف مباشر file:// — الأفضل رفعه على استضافة':'ويب '+location.protocol;
+db.ref('.info/connected').on('value',s=>$('connectionText').textContent=s.val()?'متصل ✅':'غير متصل ❌');
+
+function toast(m){$('toast').textContent=m;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2200)}
+function closeModal(id){$(id).classList.remove('show')}
+function toggleSide(){$('sidebar').classList.toggle('show')}
+function showLoginMsg(html,type=''){const el=$('loginMsg');el.innerHTML=html;el.className='msg'+(type?' '+type:'')}
+function friendly(c){
+ return ({
+ 'auth/invalid-credential':'البريد أو كلمة المرور غير صحيحة.',
+ 'auth/user-not-found':'الحساب غير موجود في Authentication.',
+ 'auth/wrong-password':'كلمة المرور غير صحيحة.',
+ 'auth/invalid-email':'البريد غير صحيح.',
+ 'auth/operation-not-allowed':'Email/Password غير مفعّل في Firebase Authentication.',
+ 'auth/too-many-requests':'محاولات كثيرة. حاول بعد قليل.',
+ 'PERMISSION_DENIED':'Firebase رفض الحفظ. انشر قواعد Realtime Database الخاصة بالنسخة V4.'
+ }[c]||c||'حدث خطأ غير معروف')
+}
+
+$('loginForm').addEventListener('submit',async e=>{
+ e.preventDefault();
+ $('loginBtn').disabled=true;$('loginBtn').textContent='جاري الدخول...';
+ try{
+   const cred=await auth.signInWithEmailAndPassword($('email').value.trim(),$('password').value);
+   await ensureAdmin(cred.user);
+ }catch(err){
+   console.error(err);
+   showLoginMsg('❌ '+friendly(err.code||err.message),'err');
+ }finally{
+   $('loginBtn').disabled=false;$('loginBtn').textContent='دخول الأدمن';
+ }
+});
+
+async function ensureAdmin(user){
+ currentUser=user;
+ try{
+   const adminSnap=await db.ref('admins/'+user.uid).once('value');
+   if(adminSnap.val()===true){ enterAdmin(user); return; }
+
+   const readySnap=await db.ref('meta/adminReady').once('value');
+   if(readySnap.val()!==true){
+     await db.ref().update({
+       ['admins/'+user.uid]: true,
+       'meta/adminReady': true
+     });
+     showLoginMsg('✅ تم تثبيت هذا الحساب كأول أدمن بنجاح.','ok');
+     enterAdmin(user);
+     return;
+   }
+
+   await auth.signOut();
+   showLoginMsg('الحساب صحيح لكنه ليس الأدمن المسجل للموقع.<br>UID هذا الحساب:<div class="uid">'+esc(user.uid)+'</div>لو كنت أضفت أدمن غلط قبل كده، احذف <b>meta/adminReady</b> و <b>admins</b> من Realtime Database ثم سجّل الدخول بالحساب الصحيح مرة واحدة.','err');
+ }catch(err){
+   console.error(err);
+   if(err.code==='PERMISSION_DENIED'){
+     showLoginMsg('تم تسجيل الدخول للحساب، لكن قاعدة البيانات رفضت الصلاحية.<br><b>الحل:</b> انسخ ملف <b>database.rules.json</b> الخاص بـ V3 إلى Realtime Database → Rules ثم اضغط Publish.','err');
+   }else{
+     showLoginMsg('حدث خطأ أثناء تثبيت صلاحية الأدمن: '+friendly(err.code||err.message),'err');
+   }
+ }
+}
+
+function enterAdmin(user){
+ currentUser=user;$('adminEmail').textContent=user.email;$('loginWrap').classList.add('hidden');$('app').classList.remove('hidden');bindData();setTimeout(()=>seedDefaults(true),700)
+}
+
+auth.onAuthStateChanged(async user=>{
+ if(!user){$('loginWrap').classList.remove('hidden');$('app').classList.add('hidden');currentUser=null;return}
+ // Only auto-enter on persisted sessions if already admin.
+ try{
+   const s=await db.ref('admins/'+user.uid).once('value');
+   if(s.val()===true) enterAdmin(user);
+ }catch(_){}
+});
+
+function logout(){auth.signOut()}
+function bindData(){
+ db.ref('categories').on('value',s=>{categories=s.val()||{};renderCategories();fillCategorySelect();stats()});
+ db.ref('products').on('value',s=>{products=s.val()||{};renderProducts();stats()});
+ db.ref('orders').on('value',s=>{orders=s.val()||{};renderOrders();renderLatest();stats()});
+ db.ref('settings').on('value',s=>{settings=s.val()||{};fillSettings()});
+}
+document.querySelectorAll('.navBtn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.navBtn').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('[id^="page-"]').forEach(x=>x.classList.add('hidden'));$('page-'+b.dataset.page).classList.remove('hidden');$('pageTitle').textContent=b.textContent.replace(/[📊🪑🗂️📦⚙️]/g,'').trim();$('sidebar').classList.remove('show')}));
+function stats(){const o=Object.values(orders);$('statProducts').textContent=Object.keys(products).length;$('statCategories').textContent=Object.keys(categories).length;$('statOrders').textContent=o.filter(x=>x.status==='new').length;$('statAllOrders').textContent=o.length}
+function catName(id){return categories[id]?.name||'—'}
+function renderProducts(){
+ const rows=Object.entries(products).sort((a,b)=>(b[1].createdAt||0)-(a[1].createdAt||0));
+ $('productsBody').innerHTML=rows.length?rows.map(([id,p])=>`<tr><td><img class="thumb" src="${safeImg(p.image)}"></td><td><b>${esc(p.name)}</b></td><td>${esc(catName(p.categoryId))}</td><td>${p.price?Number(p.price).toLocaleString('ar-EG')+' ج.م':'حسب الطلب'}</td><td><span class="tag ${p.visible!==false?'on':'off'}">${p.visible!==false?'ظاهر':'مخفي'}</span></td><td><div class="rowBtns"><button class="green" onclick="openProduct('${id}')">تعديل</button><button class="red" onclick="deleteProduct('${id}')">حذف</button></div></td></tr>`).join(''):'<tr><td colspan="6">لا توجد منتجات.</td></tr>'
+}
+function fillCategorySelect(){$('pCategory').innerHTML=Object.entries(categories).sort((a,b)=>(a[1].order||0)-(b[1].order||0)).map(([id,c])=>`<option value="${id}">${esc(c.name)}</option>`).join('')}
+function openProduct(id=''){
+ $('productForm').reset();$('pId').value=id;$('pStoragePath').value='';$('uploadBar').style.width='0';$('pPreview').src='';
+ if(id&&products[id]){const p=products[id];$('productTitle').textContent='تعديل المنتج';$('pName').value=p.name||'';$('pCategory').value=p.categoryId||'';$('pPrice').value=p.price||'';$('pOldPrice').value=p.oldPrice||'';$('pDescription').value=p.description||'';$('pImage').value=p.image||'';$('pStoragePath').value=p.storagePath||'';$('pVisible').value=String(p.visible!==false);$('pFeatured').value=String(p.featured===true);$('pPreview').src=safeImg(p.image)}
+ else $('productTitle').textContent='إضافة منتج';
+ updateDescriptionCounter();$('productModal').classList.add('show')
+}
+$('pImage').addEventListener('input',()=>{$('pPreview').src=safeImg($('pImage').value)});
+async function fileToCompressedDataURL(file){
+ if(!file)return '';
+ if(!file.type.startsWith('image/'))throw new Error('الملف يجب أن يكون صورة');
+ if(file.size>12*1024*1024)throw new Error('حجم الصورة كبير جدًا. اختر صورة أقل من 12MB');
+ $('uploadBar').style.width='15%';
+ const raw=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(new Error('تعذر قراءة الصورة'));r.readAsDataURL(file)});
+ $('uploadBar').style.width='40%';
+ const img=await new Promise((resolve,reject)=>{const i=new Image();i.onload=()=>resolve(i);i.onerror=()=>reject(new Error('تعذر فتح الصورة'));i.src=raw});
+ const max=1100, scale=Math.min(1,max/Math.max(img.width,img.height));
+ const w=Math.max(1,Math.round(img.width*scale)),h=Math.max(1,Math.round(img.height*scale));
+ const c=document.createElement('canvas');c.width=w;c.height=h;const ctx=c.getContext('2d');ctx.drawImage(img,0,0,w,h);
+ $('uploadBar').style.width='70%';
+ let q=.78, data=c.toDataURL('image/jpeg',q);
+ while(data.length>700000 && q>.42){q-=.08;data=c.toDataURL('image/jpeg',q)}
+ $('uploadBar').style.width='100%';
+ return data;
+}
+$('productForm').addEventListener('submit',async e=>{
+ e.preventDefault();
+ const saveBtn=e.submitter || $('productForm').querySelector('button[type="submit"]');
+ if(saveBtn){saveBtn.disabled=true;saveBtn.textContent='جاري الحفظ...'}
+ try{
+  if(!currentUser) throw new Error('جلسة الأدمن غير موجودة. سجل الدخول مرة أخرى.');
+  if(!$('pName').value.trim()) throw new Error('اكتب اسم المنتج.');
+  if(!$('pCategory').value){
+    await seedDefaults(true);
+    fillCategorySelect();
+    if(!$('pCategory').value) throw new Error('لا يوجد قسم متاح. أضف قسمًا أولاً.');
+  }
+  const id=$('pId').value||db.ref('products').push().key;
+  let image=$('pImage').value.trim();
+  const file=$('pFile').files[0];
+  if(file) image=await fileToCompressedDataURL(file);
+  const data={
+    name:$('pName').value.trim(),categoryId:$('pCategory').value,
+    price:$('pPrice').value?Number($('pPrice').value):'',oldPrice:$('pOldPrice').value?Number($('pOldPrice').value):'',
+    description:$('pDescription').value.trim(),image,storagePath:'',visible:$('pVisible').value==='true',featured:$('pFeatured').value==='true',
+    updatedAt:firebase.database.ServerValue.TIMESTAMP
+  };
+  if(!products[id])data.createdAt=firebase.database.ServerValue.TIMESTAMP;
+  await db.ref('products/'+id).set(data);
+  closeModal('productModal');$('productForm').reset();$('uploadBar').style.width='0';toast('✅ تم حفظ المنتج بنجاح');
+ }catch(err){console.error('PRODUCT_SAVE_ERROR',err);toast('❌ '+friendly(err.code||err.message));alert('تعذر حفظ المنتج:\n'+friendly(err.code||err.message));}
+ finally{if(saveBtn){saveBtn.disabled=false;saveBtn.textContent='حفظ المنتج'}}
+});
+async function deleteProduct(id){if(!confirm('حذف المنتج نهائيًا؟'))return;try{const p=products[id];await db.ref('products/'+id).remove();if(p?.storagePath)storage.ref(p.storagePath).delete().catch(()=>{});toast('تم حذف المنتج')}catch(e){toast(friendly(e.code||e.message))}}
+function renderCategories(){
+ const rows=Object.entries(categories).sort((a,b)=>(a[1].order||0)-(b[1].order||0));
+ $('categoriesBody').innerHTML=rows.length?rows.map(([id,c])=>`<tr><td><img class="thumb" src="${safeImg(c.image)}"></td><td><b>${esc(c.name)}</b></td><td>${c.order||0}</td><td><span class="tag ${c.visible!==false?'on':'off'}">${c.visible!==false?'ظاهر':'مخفي'}</span></td><td><div class="rowBtns"><button class="green" onclick="openCategory('${id}')">تعديل</button><button class="red" onclick="deleteCategory('${id}')">حذف</button></div></td></tr>`).join(''):'<tr><td colspan="5">لا توجد أقسام.</td></tr>'
+}
+function openCategory(id=''){$('categoryForm').reset();$('cId').value=id;if(id&&categories[id]){const c=categories[id];$('categoryTitle').textContent='تعديل القسم';$('cName').value=c.name||'';$('cOrder').value=c.order||1;$('cImage').value=c.image||'';$('cVisible').value=String(c.visible!==false)}else{$('categoryTitle').textContent='إضافة قسم';$('cOrder').value=Object.keys(categories).length+1}$('categoryModal').classList.add('show')}
+$('categoryForm').addEventListener('submit',async e=>{e.preventDefault();try{const id=$('cId').value||db.ref('categories').push().key;await db.ref('categories/'+id).update({name:$('cName').value.trim(),order:Number($('cOrder').value||0),image:$('cImage').value.trim(),visible:$('cVisible').value==='true'});closeModal('categoryModal');toast('تم حفظ القسم')}catch(err){toast(friendly(err.code||err.message))}});
+async function deleteCategory(id){if(!confirm('حذف القسم؟ المنتجات المرتبطة لن تُحذف.'))return;try{await db.ref('categories/'+id).remove();toast('تم حذف القسم')}catch(err){toast(friendly(err.code||err.message))}}
+function renderOrders(){
+ const f=$('orderFilter').value;let rows=Object.entries(orders).sort((a,b)=>(b[1].createdAt||0)-(a[1].createdAt||0));if(f!=='all')rows=rows.filter(x=>x[1].status===f);
+ $('ordersList').innerHTML=rows.length?rows.map(([id,o])=>orderHTML(id,o)).join(''):'<p style="color:var(--muted)">لا توجد طلبات.</p>'
+}
+function orderHTML(id,o){const items=(o.items||[]).map(x=>`${esc(x.name)} × ${x.qty||1}`).join(' • ');const d=o.createdAt?new Date(o.createdAt).toLocaleString('ar-EG'):'—';return `<div class="orderCard"><div class="orderTop"><div><b>${esc(o.name)}</b> — ${esc(o.phone)}<br><small>${esc(o.address)} • ${d}</small></div><select onchange="setOrderStatus('${id}',this.value)"><option value="new" ${o.status==='new'?'selected':''}>جديد</option><option value="processing" ${o.status==='processing'?'selected':''}>جاري التنفيذ</option><option value="complete" ${o.status==='complete'?'selected':''}>مكتمل</option><option value="cancelled" ${o.status==='cancelled'?'selected':''}>ملغي</option></select></div><div class="orderItems">${items||'لا توجد منتجات'}${o.notes?'<br>ملاحظات: '+esc(o.notes):''}</div><button class="btn red" onclick="deleteOrder('${id}')">حذف الطلب</button></div>`}
+function renderLatest(){const rows=Object.entries(orders).sort((a,b)=>(b[1].createdAt||0)-(a[1].createdAt||0)).slice(0,5);$('latestOrders').innerHTML=rows.length?rows.map(([id,o])=>orderHTML(id,o)).join(''):'<p style="color:var(--muted)">لا توجد طلبات حتى الآن.</p>'}
+function setOrderStatus(id,v){db.ref('orders/'+id+'/status').set(v).then(()=>toast('تم تحديث حالة الطلب')).catch(e=>toast(friendly(e.code||e.message)))}
+async function deleteOrder(id){if(!confirm('حذف الطلب؟'))return;try{await db.ref('orders/'+id).remove();toast('تم حذف الطلب')}catch(e){toast(friendly(e.code||e.message))}}
+function fillSettings(){$('sName').value=settings.name||'ورشة النمر للأثاث المنزلي';$('sShortName').value=settings.shortName||'ورشة النمر';$('sPhone').value=settings.phone||'';$('sWhatsapp').value=settings.whatsapp||'';$('sAddress').value=settings.address||'';$('sHours').value=settings.hours||'';$('sHeroImage').value=settings.heroImage||'';$('sHeroSubtitle').value=settings.heroSubtitle||'';$('sAbout').value=settings.about||''}
+$('settingsForm').addEventListener('submit',async e=>{e.preventDefault();try{await db.ref('settings').update({name:$('sName').value.trim(),shortName:$('sShortName').value.trim(),phone:$('sPhone').value.trim(),whatsapp:$('sWhatsapp').value.trim(),address:$('sAddress').value.trim(),hours:$('sHours').value.trim(),heroImage:$('sHeroImage').value.trim(),heroSubtitle:$('sHeroSubtitle').value.trim(),about:$('sAbout').value.trim()});toast('تم حفظ إعدادات الموقع')}catch(err){toast(friendly(err.code||err.message))}});
+async function seedDefaults(silent=false){
+ try{
+ const updates={};const defs=[
+ ['bedrooms','غرف نوم',1,'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=800&q=80'],
+ ['kids','غرف أطفال',2,'https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?auto=format&fit=crop&w=800&q=80'],
+ ['sofas','ركن وانتريهات',3,'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80'],
+ ['vitrines','نيش',4,'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=800&q=80'],
+ ['dining','سفر',5,'https://images.unsplash.com/photo-1617806118233-18e1de247200?auto=format&fit=crop&w=800&q=80'],
+ ['kitchens','مطابخ',6,'https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&w=800&q=80'],
+ ['doors','باب وشباك',7,'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80']
+ ];
+ for(const [id,name,order,image] of defs)if(!categories[id])updates['categories/'+id]={name,order,image,visible:true};
+ if(!Object.keys(settings).length)updates.settings={name:'ورشة النمر للأثاث المنزلي',shortName:'ورشة النمر',phone:'',whatsapp:'',address:'مصر',hours:'يوميًا من 9 ص إلى 10 م',heroSubtitle:'نصمم وننفذ أثاث منزلي بخامات مختارة بعناية مع تنفيذ المقاسات والتصميم حسب طلبك.',about:'متخصصون في غرف النوم وغرف الأطفال والركن والانتريهات والنيش والسفر والمطابخ والأبواب والشبابيك.'};
+ if(Object.keys(updates).length){await db.ref().update(updates);if(!silent)toast('تمت إضافة البيانات الأساسية')}else if(!silent)toast('البيانات الأساسية موجودة بالفعل')
+ }catch(err){toast(friendly(err.code||err.message))}
+}
+</script>
+</body>
+</html>
