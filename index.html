@@ -56,14 +56,19 @@
 
 <section id="settings" class="page"><div class="page-head"><div><h2>إعدادات الموقع</h2><p>بيانات التواصل والهوية التي تظهر للعميل</p></div></div><div class="panel"><form id="settingsForm" class="form-grid"><div class="field"><label>اسم الموقع</label><input id="siteName" class="input"></div><div class="field"><label>رقم واتساب بصيغة دولية</label><input id="whatsapp" class="input"></div><div class="field"><label>رقم الموبايل</label><input id="phone" class="input"></div><div class="field"><label>العنوان</label><input id="address" class="input"></div><div class="field full"><label>صفحة فيسبوك</label><input id="facebook" class="input" type="url"></div><div class="field"><label>رابط اللوجو</label><input id="logoUrl" class="input" type="url"></div><div class="field"><label>أو رفع اللوجو</label><input id="logoFile" class="input" type="file" accept="image/*"></div><div class="field full"><img id="logoPreview" class="preview" alt=""></div><div class="field full"><label>عنوان الواجهة</label><input id="heroTitle" class="input"></div><div class="field full"><label>وصف الواجهة</label><textarea id="heroSubtitle" class="input"></textarea></div><div class="field full"><label>رسالة واتساب الافتراضية</label><input id="defaultMessage" class="input"></div><div class="field full"><label>نص الحقوق</label><input id="footerText" class="input"></div><div class="full"><button class="btn btn-dark">حفظ الإعدادات</button></div></form></div></section>
 
-<section id="backup" class="page"><div class="page-head"><div><h2>نسخة احتياطية</h2><p>حفظ واسترجاع بيانات الموقع</p></div></div><div class="panel"><h3>تصدير نسخة</h3><p class="hint">تحميل بيانات الأقسام والتصميمات والإعدادات في ملف JSON.</p><button id="exportBtn" class="btn btn-dark">تحميل نسخة احتياطية</button></div><div class="panel"><h3>استيراد نسخة</h3><input id="importFile" class="input" type="file" accept=".json,application/json"><button id="importBtn" class="btn btn-danger" style="margin-top:8px">استيراد البيانات</button></div></section>
+<section id="backup" class="page"><div class="page-head"><div><h2>نسخة احتياطية</h2><p>حفظ واسترجاع بيانات الموقع</p></div></div><div class="panel"><h3>تصدير نسخة</h3><p class="hint">تحميل بيانات الأقسام والتصميمات والإعدادات في ملف JSON.</p><button id="exportBtn" class="btn btn-dark">تحميل نسخة احتياطية</button>
+    <div style="height:12px"></div>
+    <button id="progressiveBtn" class="btn btn-soft" type="button">تفعيل التحميل التدريجي</button>
+    <p class="hint" style="margin-top:8px">شغّلها مرة واحدة بعد تنزيل النسخة الاحتياطية. صور Base64 ستظل كما هي بدون ضغط أو تغيير جودة، لكن سيتم فصلها عن بيانات المنتجات.</p></div><div class="panel"><h3>استيراد نسخة</h3><input id="importFile" class="input" type="file" accept=".json,application/json"><button id="importBtn" class="btn btn-danger" style="margin-top:8px">استيراد البيانات</button></div></section>
 </main></div></div></div>
 <div id="notice" class="notice"></div>
 
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
 import { getDatabase, ref, onValue, set, push, update, remove, get } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyDX9iXtbze2_bkf2TqnoEqnm5iWln-17lE",
   authDomain: "elnemrfurniture.firebaseapp.com",
@@ -72,117 +77,480 @@ const firebaseConfig = {
   storageBucket: "elnemrfurniture.firebasestorage.app",
   messagingSenderId: "1046259541294"
 };
-const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getDatabase(app);
-let categories={},designs={},settings={},editingImages=[],pendingImages=[];const $=id=>document.getElementById(id);
-const notice=msg=>{$("notice").textContent=msg;$("notice").style.display="block";clearTimeout(window.__n);window.__n=setTimeout(()=>$("notice").style.display="none",2600)};
-const esc=(v="")=>String(v).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
-document.querySelectorAll(".nav").forEach(b=>b.onclick=()=>{document.querySelectorAll(".nav").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));b.classList.add("active");$(b.dataset.page).classList.add("active")});
-function loginError(err){const c=err?.code||"";let m="تعذر تنفيذ العملية";if(c.includes("invalid-credential"))m="البريد أو كلمة المرور غير صحيحة";else if(c.includes("email-already-in-use"))m="البريد مسجل بالفعل";else if(c.includes("weak-password"))m="كلمة المرور يجب ألا تقل عن 6 أحرف";else if(c.includes("operation-not-allowed"))m="فعّل Email/Password من Firebase Authentication";else if(c.includes("unauthorized-domain"))m="أضف الدومين إلى Authorized domains";$("loginError").textContent=m+(c?` (${c})`:"");$("loginError").style.display="block"}
-$("loginForm").onsubmit=async e=>{e.preventDefault();$("loginError").style.display="none";try{await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value)}catch(err){loginError(err)}};$("createAdminBtn").onclick=async()=>{try{await createUserWithEmailAndPassword(auth,$("email").value.trim(),$("password").value)}catch(err){loginError(err)}};$("logoutBtn").onclick=()=>signOut(auth);onAuthStateChanged(auth,u=>{$("loginView").style.display=u?"none":"grid";$("app").style.display=u?"block":"none"});
 
-function normalizeImages(d){
-  if(Array.isArray(d?.images) && d.images.length) return d.images.filter(Boolean);
-  if(d?.images && typeof d.images==="object") return Object.values(d.images).filter(Boolean);
-  return d?.image ? [d.image] : [];
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getDatabase(app);
+const $=id=>document.getElementById(id);
+
+let categories={},designs={},settings={},editingImages=[],pendingImages=[];
+
+const notice=msg=>{
+  $("notice").textContent=msg;$("notice").style.display="block";
+  clearTimeout(window.__n);window.__n=setTimeout(()=>$("notice").style.display="none",3200);
+};
+const esc=(v="")=>String(v).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+
+document.querySelectorAll(".nav").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".nav").forEach(x=>x.classList.remove("active"));
+  document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
+  $(b.dataset.page).classList.add("active");
+});
+
+function loginError(err){
+  const c=err?.code||"";
+  let m="تعذر تنفيذ العملية";
+  if(c.includes("invalid-credential"))m="البريد أو كلمة المرور غير صحيحة";
+  else if(c.includes("email-already-in-use"))m="البريد مسجل بالفعل";
+  else if(c.includes("weak-password"))m="كلمة المرور يجب ألا تقل عن 6 أحرف";
+  else if(c.includes("operation-not-allowed"))m="فعّل Email/Password من Firebase Authentication";
+  else if(c.includes("unauthorized-domain"))m="أضف الدومين إلى Authorized domains";
+  $("loginError").textContent=m+(c?` (${c})`:"");
+  $("loginError").style.display="block";
 }
+$("loginForm").onsubmit=async e=>{
+  e.preventDefault();$("loginError").style.display="none";
+  try{await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value)}
+  catch(err){loginError(err)}
+};
+$("createAdminBtn").onclick=async()=>{
+  try{await createUserWithEmailAndPassword(auth,$("email").value.trim(),$("password").value)}
+  catch(err){loginError(err)}
+};
+$("logoutBtn").onclick=()=>signOut(auth);
+onAuthStateChanged(auth,u=>{
+  $("loginView").style.display=u?"none":"grid";
+  $("app").style.display=u?"block":"none";
+});
+
+function legacyImages(d){
+  if(Array.isArray(d?.images)&&d.images.length)return d.images.filter(Boolean);
+  if(d?.images&&typeof d.images==="object")return Object.values(d.images).filter(Boolean);
+  return d?.image?[d.image]:[];
+}
+async function getAllImages(id,d){
+  const old=legacyImages(d);
+  if(old.length)return old;
+  const s=await get(ref(db,`designMedia/${id}/images`));
+  const v=s.val();
+  return Array.isArray(v)?v.filter(Boolean):(v&&typeof v==="object"?Object.values(v).filter(Boolean):[]);
+}
+async function getFirstImage(id,d){
+  const old=legacyImages(d);
+  if(old[0])return old[0];
+  try{return (await get(ref(db,`designMedia/${id}/images/0`))).val()||""}
+  catch(e){return ""}
+}
+async function rawBase64(file){
+  if(!file.type.startsWith("image/"))throw Error("NOT_IMAGE");
+  return await new Promise((resolve,reject)=>{
+    const r=new FileReader();
+    r.onload=()=>resolve(r.result);
+    r.onerror=reject;
+    r.readAsDataURL(file);
+  });
+}
+function metadata(d,count){
+  return {
+    title:d.title||"",
+    categoryId:d.categoryId||"",
+    description:d.description||"",
+    material:d.material||"",
+    dimensions:d.dimensions||"",
+    price:d.price||"",
+    imageCount:Number(count||d.imageCount||0),
+    mediaSeparated:true,
+    active:d.active!==false,
+    featured:!!d.featured,
+    order:Number(d.order||0),
+    createdAt:Number(d.createdAt||Date.now()),
+    updatedAt:Number(d.updatedAt||Date.now())
+  };
+}
+
 function renderImagesPreview(){
   const wrap=$("imagesPreview");
   wrap.innerHTML="";
   const all=[...editingImages,...pendingImages];
-  if(!all.length){wrap.innerHTML='<div class="hint">لم يتم اختيار صور بعد.</div>';return}
+
+  if(!all.length){
+    wrap.innerHTML='<div class="hint">لم يتم اختيار صور بعد.</div>';
+    return;
+  }
+
   all.forEach((src,index)=>{
-    const item=document.createElement("div");item.className="multi-image-item";
-    const img=document.createElement("img");img.src=src;img.alt=`صورة ${index+1}`;
-    const remove=document.createElement("button");remove.type="button";remove.className="multi-image-remove";remove.textContent="×";remove.title="حذف الصورة";
-    remove.onclick=()=>{
-      if(index<editingImages.length) editingImages.splice(index,1);
+    const item=document.createElement("div");
+    item.className="multi-image-item";
+
+    const img=document.createElement("img");
+    img.src=src;img.alt=`صورة ${index+1}`;
+
+    const del=document.createElement("button");
+    del.type="button";del.className="multi-image-remove";del.textContent="×";
+    del.onclick=()=>{
+      if(index<editingImages.length)editingImages.splice(index,1);
       else pendingImages.splice(index-editingImages.length,1);
       renderImagesPreview();
     };
-    const num=document.createElement("span");num.className="multi-image-number";num.textContent=index===0?"رئيسية":String(index+1);
-    item.append(img,remove,num);wrap.appendChild(item);
+
+    const num=document.createElement("span");
+    num.className="multi-image-number";
+    num.textContent=index===0?"رئيسية":String(index+1);
+
+    item.append(img,del,num);
+    wrap.appendChild(item);
   });
 }
+function refreshStats(){
+  $("statCats").textContent=Object.keys(categories).length;
+  $("statDesigns").textContent=Object.keys(designs).length;
+  $("statActive").textContent=Object.values(designs).filter(d=>d?.active!==false).length;
+  $("statFeatured").textContent=Object.values(designs).filter(d=>d?.featured).length;
+}
+async function loadThumbs(root=document){
+  for(const img of root.querySelectorAll("img[data-design-thumb]")){
+    const id=img.dataset.designThumb,d=designs[id];
+    if(!d)continue;
+    const src=await getFirstImage(id,d);
+    if(src)img.src=src;
+  }
+}
+function recent(){
+  const arr=Object.entries(designs)
+    .sort((a,b)=>(b[1]?.createdAt||0)-(a[1]?.createdAt||0))
+    .slice(0,6);
 
-function refreshStats(){$("statCats").textContent=Object.keys(categories).length;$("statDesigns").textContent=Object.keys(designs).length;$("statActive").textContent=Object.values(designs).filter(d=>d?.active!==false).length;$("statFeatured").textContent=Object.values(designs).filter(d=>d?.featured).length}
-function recent(){const arr=Object.entries(designs).sort((a,b)=>(b[1]?.createdAt||0)-(a[1]?.createdAt||0)).slice(0,6);$("recentDesigns").innerHTML=arr.length?arr.map(([,d])=>`<div class="recent-item"><img src="${esc(normalizeImages(d)[0]||"")}" onerror="this.style.opacity=.2"><div><b>${esc(d.title||"تصميم")}</b><span>${esc(categories[d.categoryId]?.name||"-")}</span></div></div>`).join(""):`<div class="hint">لا توجد تصميمات بعد.</div>`}
-function catOptions(){const opts=Object.entries(categories).sort((a,b)=>(a[1]?.order||0)-(b[1]?.order||0)).map(([id,c])=>`<option value="${id}">${esc(c.name||"قسم")}</option>`).join("");$("designCategory").innerHTML=`<option value="">اختر القسم</option>${opts}`;$("filterCategory").innerHTML=`<option value="all">كل الأقسام</option>${opts}`}
-function renderCats(){const rows=Object.entries(categories).sort((a,b)=>(a[1]?.order||0)-(b[1]?.order||0));$("catsBody").innerHTML=rows.length?rows.map(([id,c])=>`<tr><td>${esc(c.name||"")}</td><td>${Object.values(designs).filter(d=>d?.categoryId===id).length}</td><td>${c.order||0}</td><td><div class="actions"><button class="btn-soft" data-cat-edit="${id}">تعديل</button><button class="btn-danger" data-cat-del="${id}">حذف</button></div></td></tr>`).join(""):`<tr><td colspan="4">لا توجد أقسام.</td></tr>`}
-function renderDesigns(){const q=$("search").value.trim().toLowerCase(),fc=$("filterCategory").value,fs=$("filterState").value;let rows=Object.entries(designs).filter(([,d])=>{const oq=!q||[d.title,d.material,d.description].some(v=>String(v||"").toLowerCase().includes(q));const oc=fc==="all"||d.categoryId===fc;const os=fs==="all"||(fs==="active"&&d.active!==false)||(fs==="hidden"&&d.active===false)||(fs==="featured"&&d.featured);return oq&&oc&&os}).sort((a,b)=>(b[1]?.createdAt||0)-(a[1]?.createdAt||0));$("designsBody").innerHTML=rows.length?rows.map(([id,d])=>`<tr><td><img class="thumb" src="${esc(normalizeImages(d)[0]||"")}" onerror="this.style.opacity=.2"></td><td><b>${esc(d.title||"")}</b>${d.material?`<div class="hint">${esc(d.material)}</div>`:""}</td><td>${esc(categories[d.categoryId]?.name||"-")}</td><td><span class="pill ${d.active===false?"off":""}">${d.active===false?"مخفي":"ظاهر"}</span>${d.featured?` <span class="pill featured">مميز</span>`:""}</td><td><div class="actions"><button class="btn-soft" data-des-edit="${id}">تعديل</button><button class="btn-soft" data-des-copy="${id}">نسخ</button><button class="btn-danger" data-des-del="${id}">حذف</button></div></td></tr>`).join(""):`<tr><td colspan="5">لا توجد نتائج.</td></tr>`}
-onValue(ref(db,"categories"),s=>{categories=s.val()||{};renderCats();catOptions();refreshStats();renderDesigns();recent()});onValue(ref(db,"designs"),s=>{designs=s.val()||{};renderCats();refreshStats();renderDesigns();recent()});onValue(ref(db,"settings"),s=>{settings=s.val()||{};fillSettings()});
-$("categoryForm").onsubmit=async e=>{e.preventDefault();const id=$("catId").value,data={name:$("catName").value.trim(),order:Number($("catOrder").value)||0};try{id?await update(ref(db,`categories/${id}`),data):await set(push(ref(db,"categories")),data);resetCat();notice("تم حفظ القسم")}catch(err){notice("تعذر حفظ القسم")}};function resetCat(){$("catId").value="";$("catName").value="";$("catOrder").value="0"};$("catCancel").onclick=resetCat;
-$("seedCategoriesBtn").onclick=async()=>{const list=["غرف نوم","غرف أطفال","ركن وانتريهات","نيش","سفرة","مطابخ","باب وشباك"];const current=new Set(Object.values(categories).map(c=>c?.name));let order=Object.keys(categories).length;try{for(const name of list)if(!current.has(name))await set(push(ref(db,"categories")),{name,order:order++});notice("تمت إضافة الأقسام الأساسية")}catch(e){notice("تعذر الإضافة")}};
-$("catsBody").onclick=async e=>{const ed=e.target.dataset.catEdit,del=e.target.dataset.catDel;if(ed){const c=categories[ed];$("catId").value=ed;$("catName").value=c.name||"";$("catOrder").value=c.order||0}if(del){if(Object.values(designs).some(d=>d?.categoryId===del))return alert("القسم يحتوي على تصميمات.");if(confirm("حذف القسم؟"))await remove(ref(db,`categories/${del}`))}};
-async function compress(file,max=1280,q=.76){if(!file.type.startsWith("image/"))throw Error("NOT_IMAGE");const raw=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file)});const img=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=raw});let target=max,quality=q,result="";for(let n=0;n<5;n++){let w=img.width,h=img.height,s=Math.min(1,target/Math.max(w,h));w=Math.round(w*s);h=Math.round(h*s);const c=document.createElement("canvas");c.width=w;c.height=h;const ctx=c.getContext("2d");ctx.fillStyle="#fff";ctx.fillRect(0,0,w,h);ctx.drawImage(img,0,0,w,h);result=c.toDataURL("image/jpeg",quality);if(result.length<900000)break;target*=.82;quality=Math.max(.54,quality-.07)}if(result.length>1200000)throw Error("IMAGE_TOO_LARGE");return result}
+  $("recentDesigns").innerHTML=arr.length?arr.map(([id,d])=>
+    `<div class="recent-item"><img data-design-thumb="${id}" alt=""><div><b>${esc(d.title||"تصميم")}</b><span>${esc(categories[d.categoryId]?.name||"-")}</span></div></div>`
+  ).join(""):`<div class="hint">لا توجد تصميمات بعد.</div>`;
+
+  loadThumbs($("recentDesigns"));
+}
+function catOptions(){
+  const opts=Object.entries(categories)
+    .sort((a,b)=>(a[1]?.order||0)-(b[1]?.order||0))
+    .map(([id,c])=>`<option value="${id}">${esc(c.name||"قسم")}</option>`).join("");
+
+  const current=$("designCategory").value;
+  $("designCategory").innerHTML=`<option value="">اختر القسم</option>${opts}`;
+  $("filterCategory").innerHTML=`<option value="all">كل الأقسام</option>${opts}`;
+  if(current)$("designCategory").value=current;
+}
+function renderCats(){
+  const rows=Object.entries(categories).sort((a,b)=>(a[1]?.order||0)-(b[1]?.order||0));
+  $("catsBody").innerHTML=rows.length?rows.map(([id,c])=>
+    `<tr><td>${esc(c.name||"")}</td><td>${Object.values(designs).filter(d=>d?.categoryId===id).length}</td><td>${c.order||0}</td><td><div class="actions"><button class="btn-soft" data-cat-edit="${id}">تعديل</button><button class="btn-danger" data-cat-del="${id}">حذف</button></div></td></tr>`
+  ).join(""):`<tr><td colspan="4">لا توجد أقسام.</td></tr>`;
+}
+function renderDesigns(){
+  const q=$("search").value.trim().toLowerCase();
+  const fc=$("filterCategory").value;
+  const fs=$("filterState").value;
+
+  let rows=Object.entries(designs).filter(([,d])=>{
+    const oq=!q||[d.title,d.material,d.description].some(v=>String(v||"").toLowerCase().includes(q));
+    const oc=fc==="all"||d.categoryId===fc;
+    const os=fs==="all"||
+      (fs==="active"&&d.active!==false)||
+      (fs==="hidden"&&d.active===false)||
+      (fs==="featured"&&d.featured);
+    return oq&&oc&&os;
+  }).sort((a,b)=>(b[1]?.createdAt||0)-(a[1]?.createdAt||0));
+
+  $("designsBody").innerHTML=rows.length?rows.map(([id,d])=>
+    `<tr>
+      <td><img class="thumb" data-design-thumb="${id}" alt=""></td>
+      <td><b>${esc(d.title||"")}</b>${d.material?`<div class="hint">${esc(d.material)}</div>`:""}${Number(d.imageCount||0)>1?`<div class="hint">${d.imageCount} صور</div>`:""}</td>
+      <td>${esc(categories[d.categoryId]?.name||"-")}</td>
+      <td><span class="pill ${d.active===false?"off":""}">${d.active===false?"مخفي":"ظاهر"}</span>${d.featured?` <span class="pill featured">مميز</span>`:""}</td>
+      <td><div class="actions"><button class="btn-soft" data-des-edit="${id}">تعديل</button><button class="btn-soft" data-des-copy="${id}">نسخ</button><button class="btn-danger" data-des-del="${id}">حذف</button></div></td>
+    </tr>`
+  ).join(""):`<tr><td colspan="5">لا توجد نتائج.</td></tr>`;
+
+  loadThumbs($("designsBody"));
+}
+
+onValue(ref(db,"categories"),s=>{
+  categories=s.val()||{};
+  renderCats();catOptions();refreshStats();renderDesigns();recent();
+});
+onValue(ref(db,"designs"),s=>{
+  designs=s.val()||{};
+  renderCats();refreshStats();renderDesigns();recent();
+});
+onValue(ref(db,"settings"),s=>{
+  settings=s.val()||{};
+  fillSettings();
+});
+
+$("categoryForm").onsubmit=async e=>{
+  e.preventDefault();
+  const id=$("catId").value;
+  const data={name:$("catName").value.trim(),order:Number($("catOrder").value)||0};
+  try{
+    if(id)await update(ref(db,`categories/${id}`),data);
+    else await set(push(ref(db,"categories")),data);
+    resetCat();notice("تم حفظ القسم");
+  }catch(e){notice("تعذر حفظ القسم")}
+};
+function resetCat(){
+  $("catId").value="";$("catName").value="";$("catOrder").value="0";
+}
+$("catCancel").onclick=resetCat;
+
+$("seedCategoriesBtn").onclick=async()=>{
+  const list=["غرف نوم","غرف أطفال","ركن وانتريهات","نيش","سفرة","مطابخ","باب وشباك"];
+  const current=new Set(Object.values(categories).map(c=>c?.name));
+  let order=Object.keys(categories).length;
+  try{
+    for(const name of list)if(!current.has(name))
+      await set(push(ref(db,"categories")),{name,order:order++});
+    notice("تمت إضافة الأقسام الأساسية");
+  }catch(e){notice("تعذر الإضافة")}
+};
+$("catsBody").onclick=async e=>{
+  const ed=e.target.dataset.catEdit;
+  const del=e.target.dataset.catDel;
+  if(ed){
+    const c=categories[ed];
+    $("catId").value=ed;$("catName").value=c.name||"";$("catOrder").value=c.order||0;
+  }
+  if(del){
+    if(Object.values(designs).some(d=>d?.categoryId===del))
+      return alert("القسم يحتوي على تصميمات.");
+    if(confirm("حذف القسم؟"))await remove(ref(db,`categories/${del}`));
+  }
+};
+
 $("imageFiles").onchange=async()=>{
   const files=[...$("imageFiles").files];
   if(!files.length)return;
-  if(editingImages.length+files.length>8){
-    notice("الحد المقترح 8 صور للتصميم");
-  }
   try{
     pendingImages=[];
     for(const f of files.slice(0,Math.max(0,8-editingImages.length))){
-      pendingImages.push(await compress(f,1100,.70));
+      notice("جاري تجهيز الصور Base64 بدون ضغط...");
+      pendingImages.push(await rawBase64(f));
     }
+    $("imageFiles").value="";
     renderImagesPreview();
-  }catch(e){console.error(e);notice("تعذر تجهيز إحدى الصور")}
+    notice("تم تجهيز الصور كما هي");
+  }catch(e){
+    console.error(e);notice("تعذر تجهيز إحدى الصور");
+  }
 };
-$("imageUrls").oninput=()=>{};
+
 $("designForm").onsubmit=async e=>{
   e.preventDefault();
-  const id=$("designId").value,title=$("designTitle").value.trim(),categoryId=$("designCategory").value;
+
+  const oldId=$("designId").value;
+  const title=$("designTitle").value.trim();
+  const categoryId=$("designCategory").value;
   if(!title||!categoryId)return alert("اكتب اسم التصميم واختار القسم.");
+
   try{
     const urlImages=$("imageUrls").value.split(/\n+/).map(x=>x.trim()).filter(Boolean);
     let images=[...editingImages,...urlImages,...pendingImages].filter(Boolean);
     images=[...new Set(images)].slice(0,8);
+
+    if(!images.length&&oldId)images=await getAllImages(oldId,designs[oldId]);
     if(!images.length)return alert("أضف صورة واحدة على الأقل للتصميم.");
 
-    const data={
-      title,categoryId,
+    const r=oldId?ref(db,`designs/${oldId}`):push(ref(db,"designs"));
+    const id=oldId||r.key;
+
+    const data=metadata({
+      title,
+      categoryId,
       description:$("designDescription").value.trim(),
       material:$("designMaterial").value.trim(),
       dimensions:$("designDimensions").value.trim(),
       price:$("designPrice").value.trim(),
-      image:images[0],
-      images,
       active:$("designActive").value==="true",
       featured:$("designFeatured").checked,
       order:Number($("designOrder").value)||0,
-      createdAt:id?(designs[id]?.createdAt||Date.now()):Date.now(),
+      createdAt:oldId?(designs[oldId]?.createdAt||Date.now()):Date.now(),
       updatedAt:Date.now()
-    };
-    let r;
-    if(id){r=ref(db,`designs/${id}`);await update(r,data)}
-    else{r=push(ref(db,"designs"));await set(r,data)}
-    if(!(await get(r)).exists())throw Error("VERIFY");
+    },images.length);
+
+    await set(ref(db,`designMedia/${id}/images`),images);
+    await set(r,data);
+
     resetDesign();
-    notice(`تم حفظ التصميم بـ ${images.length} صورة`);
-  }catch(err){
-    console.error(err);
-    notice(String(err?.message).includes("IMAGE_TOO_LARGE")?"إحدى الصور كبيرة جداً":"تعذر حفظ التصميم")
+    notice(`تم حفظ التصميم بـ ${images.length} صورة Base64`);
+  }catch(e){
+    console.error(e);notice("تعذر حفظ التصميم");
   }
 };
 function resetDesign(){
-  ["designId","designTitle","designDescription","designMaterial","designDimensions","designPrice","imageUrls"].forEach(id=>$(id).value="");
+  ["designId","designTitle","designDescription","designMaterial","designDimensions","designPrice","imageUrls"]
+    .forEach(id=>$(id).value="");
   $("designCategory").value="";
   $("designActive").value="true";
   $("designFeatured").checked=false;
   $("designOrder").value="0";
   $("imageFiles").value="";
-  editingImages=[];
-  pendingImages=[];
+  editingImages=[];pendingImages=[];
   renderImagesPreview();
 }
 $("designCancel").onclick=resetDesign;
-$("designsBody").onclick=async e=>{const ed=e.target.dataset.desEdit,cp=e.target.dataset.desCopy,del=e.target.dataset.desDel;if(ed){const d=designs[ed];$("designId").value=ed;$("designTitle").value=d.title||"";$("designCategory").value=d.categoryId||"";$("designDescription").value=d.description||"";$("designMaterial").value=d.material||"";$("designDimensions").value=d.dimensions||"";$("designPrice").value=d.price||"";$("imageUrls").value="";editingImages=normalizeImages(d);pendingImages=[];renderImagesPreview();$("designActive").value=d.active===false?"false":"true";$("designFeatured").checked=!!d.featured;$("designOrder").value=d.order||0;window.scrollTo({top:0,behavior:"smooth"})}if(cp){const d={...designs[cp],title:(designs[cp].title||"تصميم")+" - نسخة",createdAt:Date.now(),updatedAt:Date.now(),featured:false};await set(push(ref(db,"designs")),d);notice("تم نسخ التصميم")}if(del&&confirm("حذف التصميم نهائياً؟"))await remove(ref(db,`designs/${del}`))};
+
+$("designsBody").onclick=async e=>{
+  const ed=e.target.dataset.desEdit;
+  const cp=e.target.dataset.desCopy;
+  const del=e.target.dataset.desDel;
+
+  if(ed){
+    const d=designs[ed];
+    $("designId").value=ed;
+    $("designTitle").value=d.title||"";
+    $("designCategory").value=d.categoryId||"";
+    $("designDescription").value=d.description||"";
+    $("designMaterial").value=d.material||"";
+    $("designDimensions").value=d.dimensions||"";
+    $("designPrice").value=d.price||"";
+    $("imageUrls").value="";
+    editingImages=await getAllImages(ed,d);
+    pendingImages=[];
+    renderImagesPreview();
+    $("designActive").value=d.active===false?"false":"true";
+    $("designFeatured").checked=!!d.featured;
+    $("designOrder").value=d.order||0;
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+
+  if(cp){
+    const d=designs[cp];
+    const images=await getAllImages(cp,d);
+    const nr=push(ref(db,"designs"));
+    const id=nr.key;
+    const copy=metadata({...d,title:(d.title||"تصميم")+" - نسخة",createdAt:Date.now(),updatedAt:Date.now(),featured:false},images.length);
+    await set(nr,copy);
+    if(images.length)await set(ref(db,`designMedia/${id}/images`),images);
+    notice("تم نسخ التصميم");
+  }
+
+  if(del&&confirm("حذف التصميم نهائياً؟")){
+    await remove(ref(db,`designs/${del}`));
+    await remove(ref(db,`designMedia/${del}`)).catch(()=>{});
+  }
+};
+
 renderImagesPreview();
-$("search").oninput=renderDesigns;$("filterCategory").onchange=renderDesigns;$("filterState").onchange=renderDesigns;
-function fillSettings(){$("siteName").value=settings.siteName||"ورشة النمر للأثاث المنزلي";$("whatsapp").value=settings.whatsapp||"201065342535";$("phone").value=settings.phone||"01065342535";$("address").value=settings.address||"أسيوط - منفلوط - بني عدي البحرية";$("facebook").value=settings.facebook||"";$("logoUrl").value=String(settings.logo||"").startsWith("data:")?"":settings.logo||"";$("heroTitle").value=settings.heroTitle||"أثاث يتصمم على ذوقك ويتنفذ على مقاس بيتك";$("heroSubtitle").value=settings.heroSubtitle||"استعرض التصميمات واختار الفكرة المناسبة، ثم اطلب تنفيذها مباشرة من ورشة النمر.";$("defaultMessage").value=settings.defaultMessage||"مرحباً، أريد طلب تصميم أثاث من ورشة النمر";$("footerText").value=settings.footerText||"ورشة النمر للأثاث المنزلي - جميع الحقوق محفوظة";if(settings.logo){$("logoPreview").src=settings.logo;$("logoPreview").style.display="block"}else $("logoPreview").style.display="none"}
-$("logoFile").onchange=async()=>{const f=$("logoFile").files[0];if(f){$("logoPreview").src=await compress(f,900,.82);$("logoPreview").style.display="block"}};$("logoUrl").oninput=()=>{if($("logoUrl").value){$("logoPreview").src=$("logoUrl").value;$("logoPreview").style.display="block"}};
-$("settingsForm").onsubmit=async e=>{e.preventDefault();try{let logo=$("logoUrl").value.trim();const f=$("logoFile").files[0];if(f)logo=await compress(f,900,.82);if(!logo)logo=settings.logo||"";await set(ref(db,"settings"),{siteName:$("siteName").value.trim(),whatsapp:$("whatsapp").value.replace(/\D/g,""),phone:$("phone").value.trim(),address:$("address").value.trim(),facebook:$("facebook").value.trim(),logo,heroTitle:$("heroTitle").value.trim(),heroSubtitle:$("heroSubtitle").value.trim(),defaultMessage:$("defaultMessage").value.trim(),footerText:$("footerText").value.trim()});notice("تم حفظ الإعدادات")}catch(err){notice("تعذر حفظ الإعدادات")}};
-$("exportBtn").onclick=()=>{const blob=new Blob([JSON.stringify({exportedAt:new Date().toISOString(),categories,designs,settings},null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`elnemer-backup-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(a.href)};
-$("importBtn").onclick=async()=>{const f=$("importFile").files[0];if(!f)return alert("اختار ملف JSON أولاً.");if(!confirm("سيتم استبدال البيانات الحالية. متأكد؟"))return;try{const data=JSON.parse(await f.text());await set(ref(db,"categories"),data.categories||{});await set(ref(db,"designs"),data.designs||{});await set(ref(db,"settings"),data.settings||{});notice("تم استيراد النسخة")}catch(e){notice("الملف غير صالح")}};
+$("search").oninput=renderDesigns;
+$("filterCategory").onchange=renderDesigns;
+$("filterState").onchange=renderDesigns;
+
+function fillSettings(){
+  $("siteName").value=settings.siteName||"ورشة النمر للأثاث المنزلي";
+  $("whatsapp").value=settings.whatsapp||"201065342535";
+  $("phone").value=settings.phone||"01065342535";
+  $("address").value=settings.address||"أسيوط - منفلوط - بني عدي البحرية";
+  $("facebook").value=settings.facebook||"";
+  $("logoUrl").value=String(settings.logo||"").startsWith("data:")?"":settings.logo||"";
+  $("heroTitle").value=settings.heroTitle||"أثاث يتصمم على ذوقك ويتنفذ على مقاس بيتك";
+  $("heroSubtitle").value=settings.heroSubtitle||"استعرض التصميمات واختار الفكرة المناسبة، ثم اطلب تنفيذها مباشرة من ورشة النمر.";
+  $("defaultMessage").value=settings.defaultMessage||"مرحباً، أريد طلب تصميم أثاث من ورشة النمر";
+  $("footerText").value=settings.footerText||"ورشة النمر للأثاث المنزلي - جميع الحقوق محفوظة";
+  if(settings.logo){
+    $("logoPreview").src=settings.logo;
+    $("logoPreview").style.display="block";
+  }else $("logoPreview").style.display="none";
+}
+$("logoFile").onchange=async()=>{
+  const f=$("logoFile").files[0];
+  if(f){
+    $("logoPreview").src=await rawBase64(f);
+    $("logoPreview").style.display="block";
+  }
+};
+$("logoUrl").oninput=()=>{
+  if($("logoUrl").value){
+    $("logoPreview").src=$("logoUrl").value;
+    $("logoPreview").style.display="block";
+  }
+};
+$("settingsForm").onsubmit=async e=>{
+  e.preventDefault();
+  try{
+    let logo=$("logoUrl").value.trim();
+    const f=$("logoFile").files[0];
+    if(f)logo=await rawBase64(f);
+    if(!logo)logo=settings.logo||"";
+
+    await set(ref(db,"settings"),{
+      siteName:$("siteName").value.trim(),
+      whatsapp:$("whatsapp").value.replace(/\D/g,""),
+      phone:$("phone").value.trim(),
+      address:$("address").value.trim(),
+      facebook:$("facebook").value.trim(),
+      logo,
+      heroTitle:$("heroTitle").value.trim(),
+      heroSubtitle:$("heroSubtitle").value.trim(),
+      defaultMessage:$("defaultMessage").value.trim(),
+      footerText:$("footerText").value.trim()
+    });
+
+    notice("تم حفظ الإعدادات");
+  }catch(e){notice("تعذر حفظ الإعدادات")}
+};
+
+$("progressiveBtn").onclick=async()=>{
+  if(!confirm("تأكد أنك حمّلت نسخة احتياطية أولاً. سيتم فصل صور Base64 عن بيانات المنتجات بدون ضغط أو تغيير. متابعة؟"))return;
+
+  try{
+    const snap=await get(ref(db,"designs"));
+    const all=snap.val()||{};
+    const entries=Object.entries(all);
+    let done=0;
+
+    for(const [id,d] of entries){
+      let images=legacyImages(d);
+      if(!images.length)images=await getAllImages(id,d);
+
+      if(images.length)await set(ref(db,`designMedia/${id}/images`),images);
+      await set(ref(db,`designs/${id}`),metadata(d,images.length));
+
+      done++;
+      notice(`جاري التفعيل ${done}/${entries.length}`);
+    }
+
+    notice("تم تفعيل التحميل التدريجي بنجاح");
+  }catch(e){
+    console.error(e);
+    notice("حدث خطأ. يمكن تشغيل الزر مرة أخرى.");
+  }
+};
+
+$("exportBtn").onclick=async()=>{
+  try{
+    const media=(await get(ref(db,"designMedia"))).val()||{};
+    const blob=new Blob([JSON.stringify({
+      exportedAt:new Date().toISOString(),
+      categories,designs,designMedia:media,settings
+    },null,2)],{type:"application/json"});
+
+    const a=document.createElement("a");
+    a.href=URL.createObjectURL(blob);
+    a.download=`elnemer-progressive-backup-${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }catch(e){notice("تعذر إنشاء النسخة الاحتياطية")}
+};
+$("importBtn").onclick=async()=>{
+  const f=$("importFile").files[0];
+  if(!f)return alert("اختار ملف JSON أولاً.");
+  if(!confirm("سيتم استبدال البيانات الحالية. متأكد؟"))return;
+
+  try{
+    const data=JSON.parse(await f.text());
+    await set(ref(db,"categories"),data.categories||{});
+    await set(ref(db,"designs"),data.designs||{});
+    await set(ref(db,"designMedia"),data.designMedia||{});
+    await set(ref(db,"settings"),data.settings||{});
+    notice("تم استيراد النسخة");
+  }catch(e){notice("الملف غير صالح")}
+};
+
 </script>
 </body></html>
