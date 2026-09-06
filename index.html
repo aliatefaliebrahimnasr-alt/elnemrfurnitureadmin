@@ -33,6 +33,17 @@
 .multi-image-number{position:absolute;right:5px;bottom:5px;background:rgba(23,21,19,.78);color:#fff;border-radius:999px;padding:3px 7px;font-size:9px}
 .image-help{background:#f7f0e8;border:1px solid var(--line);padding:10px 12px;border-radius:11px;font-size:10px;color:var(--muted);line-height:1.8}
 
+
+.thumb-empty{
+  width:66px;height:54px;border-radius:9px;background:#eee7df;
+  display:grid;place-items:center;font-size:9px;color:#8a8179;border:1px dashed #d6c9bb
+}
+.btn[disabled]{opacity:.55;cursor:not-allowed}
+.save-progress{
+  display:none;margin-top:8px;padding:9px 11px;border-radius:10px;
+  background:#f7f0e8;border:1px solid var(--line);font-size:10px;color:var(--muted)
+}
+.save-progress.show{display:block}
 </style>
 </head>
 <body>
@@ -52,13 +63,14 @@
 <section id="designs" class="page"><div class="page-head"><div><h2>التصميمات</h2><p>إضافة وتعديل وعرض التصميمات داخل الموقع</p></div></div><div class="panel"><form id="designForm" class="form-grid"><input id="designId" type="hidden"><div class="field"><label>اسم التصميم</label><input id="designTitle" class="input" required></div><div class="field"><label>القسم</label><select id="designCategory" class="input" required></select></div><div class="field full"><label>الوصف</label><textarea id="designDescription" class="input"></textarea></div><div class="field"><label>الخامة</label><input id="designMaterial" class="input" placeholder="مثال: خشب زان"></div><div class="field"><label>المقاس</label><input id="designDimensions" class="input" placeholder="مثال: حسب الطلب"></div><div class="field"><label>السعر / عبارة السعر</label><input id="designPrice" class="input" placeholder="مثال: حسب المقاس"></div><div class="field full"><label>روابط الصور (اختياري)</label><textarea id="imageUrls" class="input" placeholder="ضع كل رابط صورة في سطر منفصل&#10;https://...&#10;https://..."></textarea></div>
 <div class="field full"><label>أو ارفع عدة صور من الجهاز</label><input id="imageFiles" class="input" type="file" accept="image/*" multiple><div class="hint">يمكنك تحديد أكثر من صورة مرة واحدة. الحد المقترح 8 صور لكل تصميم.</div></div>
 <div class="field full"><div class="image-help">الصورة الأولى ستكون الصورة الرئيسية في بطاقة التصميم، وباقي الصور ستظهر داخل معرض الصور عند فتح التفاصيل.</div></div>
-<div class="field full"><label>الصور الحالية / المختارة</label><div id="imagesPreview" class="multi-images"></div></div><div class="field"><label>الحالة</label><select id="designActive" class="input"><option value="true">ظاهر</option><option value="false">مخفي</option></select></div><div class="field"><label>الترتيب</label><input id="designOrder" class="input" type="number" value="0"></div><div class="field full"><label class="switch"><input id="designFeatured" type="checkbox"><span><b>تصميم مميز</b><br><small>يظهر في قسم مختارات ورشة النمر وقد يظهر في الواجهة</small></span></label></div><div class="full row-actions"><button class="btn btn-dark">حفظ التصميم</button><button id="designCancel" class="btn btn-soft" type="button">إلغاء</button></div></form></div><div class="panel"><div class="toolbar"><input id="search" class="input" placeholder="بحث..."><select id="filterCategory" class="input"><option value="all">كل الأقسام</option></select><select id="filterState" class="input"><option value="all">كل الحالات</option><option value="active">ظاهر</option><option value="hidden">مخفي</option><option value="featured">مميز</option></select></div><div class="table-wrap"><table><thead><tr><th>الصورة</th><th>التصميم</th><th>القسم</th><th>الحالة</th><th>إجراءات</th></tr></thead><tbody id="designsBody"></tbody></table></div></div></section>
+<div class="field full"><label>الصور الحالية / المختارة</label><div id="imagesPreview" class="multi-images"></div></div><div class="field"><label>الحالة</label><select id="designActive" class="input"><option value="true">ظاهر</option><option value="false">مخفي</option></select></div><div class="field"><label>الترتيب</label><input id="designOrder" class="input" type="number" value="0"></div><div class="field full"><label class="switch"><input id="designFeatured" type="checkbox"><span><b>تصميم مميز</b><br><small>يظهر في قسم مختارات ورشة النمر وقد يظهر في الواجهة</small></span></label></div><div class="full row-actions"><button id="saveDesignBtn" class="btn btn-dark">حفظ التصميم</button><button id="designCancel" class="btn btn-soft" type="button">إلغاء</button></div><div id="saveProgress" class="save-progress full"></div></form></div><div class="panel"><div class="toolbar"><input id="search" class="input" placeholder="بحث..."><select id="filterCategory" class="input"><option value="all">كل الأقسام</option></select><select id="filterState" class="input"><option value="all">كل الحالات</option><option value="active">ظاهر</option><option value="hidden">مخفي</option><option value="featured">مميز</option></select></div><div class="table-wrap"><table><thead><tr><th>الصورة</th><th>التصميم</th><th>القسم</th><th>الحالة</th><th>إجراءات</th></tr></thead><tbody id="designsBody"></tbody></table></div></div></section>
 
 <section id="settings" class="page"><div class="page-head"><div><h2>إعدادات الموقع</h2><p>بيانات التواصل والهوية التي تظهر للعميل</p></div></div><div class="panel"><form id="settingsForm" class="form-grid"><div class="field"><label>اسم الموقع</label><input id="siteName" class="input"></div><div class="field"><label>رقم واتساب بصيغة دولية</label><input id="whatsapp" class="input"></div><div class="field"><label>رقم الموبايل</label><input id="phone" class="input"></div><div class="field"><label>العنوان</label><input id="address" class="input"></div><div class="field full"><label>صفحة فيسبوك</label><input id="facebook" class="input" type="url"></div><div class="field"><label>رابط اللوجو</label><input id="logoUrl" class="input" type="url"></div><div class="field"><label>أو رفع اللوجو</label><input id="logoFile" class="input" type="file" accept="image/*"></div><div class="field full"><img id="logoPreview" class="preview" alt=""></div><div class="field full"><label>عنوان الواجهة</label><input id="heroTitle" class="input"></div><div class="field full"><label>وصف الواجهة</label><textarea id="heroSubtitle" class="input"></textarea></div><div class="field full"><label>رسالة واتساب الافتراضية</label><input id="defaultMessage" class="input"></div><div class="field full"><label>نص الحقوق</label><input id="footerText" class="input"></div><div class="full"><button class="btn btn-dark">حفظ الإعدادات</button></div></form></div></section>
 
 <section id="backup" class="page"><div class="page-head"><div><h2>نسخة احتياطية</h2><p>حفظ واسترجاع بيانات الموقع</p></div></div><div class="panel"><h3>تصدير نسخة</h3><p class="hint">تحميل بيانات الأقسام والتصميمات والإعدادات في ملف JSON.</p><button id="exportBtn" class="btn btn-dark">تحميل نسخة احتياطية</button>
     <div style="height:12px"></div>
     <button id="progressiveBtn" class="btn btn-soft" type="button">تفعيل التحميل التدريجي</button>
+    <button id="repairThumbsBtn" class="btn btn-soft" type="button" style="margin-inline-start:7px">إصلاح الصور المصغرة</button>
     <p class="hint" style="margin-top:8px">شغّلها مرة واحدة بعد تنزيل النسخة الاحتياطية. صور Base64 ستظل كما هي بدون ضغط أو تغيير جودة، لكن سيتم فصلها عن بيانات المنتجات.</p></div><div class="panel"><h3>استيراد نسخة</h3><input id="importFile" class="input" type="file" accept=".json,application/json"><button id="importBtn" class="btn btn-danger" style="margin-top:8px">استيراد البيانات</button></div></section>
 </main></div></div></div>
 <div id="notice" class="notice"></div>
@@ -83,13 +95,35 @@ const auth=getAuth(app);
 const db=getDatabase(app);
 const $=id=>document.getElementById(id);
 
-let categories={},designs={},settings={},editingImages=[],pendingImages=[];
+let categories={}, designs={}, settings={}, thumbs={};
+let editingImages=[], pendingImages=[];
+let savingDesign=false;
 
 const notice=msg=>{
-  $("notice").textContent=msg;$("notice").style.display="block";
-  clearTimeout(window.__n);window.__n=setTimeout(()=>$("notice").style.display="none",3200);
+  $("notice").textContent=msg;
+  $("notice").style.display="block";
+  clearTimeout(window.__n);
+  window.__n=setTimeout(()=>$("notice").style.display="none",3500);
 };
-const esc=(v="")=>String(v).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+const esc=(v="")=>String(v).replace(/[&<>"']/g,m=>({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+}[m]));
+
+function showProgress(msg,show=true){
+  const el=$("saveProgress");
+  if(!el)return;
+  el.textContent=msg||"";
+  el.classList.toggle("show",!!show);
+}
+function setSaving(on){
+  savingDesign=on;
+  const btn=$("saveDesignBtn");
+  if(btn){
+    btn.disabled=on;
+    btn.textContent=on?"جاري الحفظ...":"حفظ التصميم";
+  }
+  $("designCancel").disabled=on;
+}
 
 document.querySelectorAll(".nav").forEach(b=>b.onclick=()=>{
   document.querySelectorAll(".nav").forEach(x=>x.classList.remove("active"));
@@ -106,11 +140,13 @@ function loginError(err){
   else if(c.includes("weak-password"))m="كلمة المرور يجب ألا تقل عن 6 أحرف";
   else if(c.includes("operation-not-allowed"))m="فعّل Email/Password من Firebase Authentication";
   else if(c.includes("unauthorized-domain"))m="أضف الدومين إلى Authorized domains";
+  else if(c.includes("permission-denied"))m="ليس لديك صلاحية كتابة في Firebase";
   $("loginError").textContent=m+(c?` (${c})`:"");
   $("loginError").style.display="block";
 }
 $("loginForm").onsubmit=async e=>{
-  e.preventDefault();$("loginError").style.display="none";
+  e.preventDefault();
+  $("loginError").style.display="none";
   try{await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value)}
   catch(err){loginError(err)}
 };
@@ -136,11 +172,12 @@ async function getAllImages(id,d){
   const v=s.val();
   return Array.isArray(v)?v.filter(Boolean):(v&&typeof v==="object"?Object.values(v).filter(Boolean):[]);
 }
-async function getFirstImage(id,d){
+async function getImageAt(id,index,d){
   const old=legacyImages(d);
-  if(old[0])return old[0];
-  try{return (await get(ref(db,`designMedia/${id}/images/0`))).val()||""}
-  catch(e){return ""}
+  if(old[index])return old[index];
+  try{
+    return (await get(ref(db,`designMedia/${id}/images/${index}`))).val()||"";
+  }catch(e){return ""}
 }
 async function rawBase64(file){
   if(!file.type.startsWith("image/"))throw Error("NOT_IMAGE");
@@ -150,6 +187,40 @@ async function rawBase64(file){
     r.onerror=reject;
     r.readAsDataURL(file);
   });
+}
+function approxBytes(dataUrl){
+  if(!String(dataUrl||"").startsWith("data:"))return 0;
+  const s=dataUrl.split(",")[1]||"";
+  return Math.floor(s.length*3/4);
+}
+async function loadImage(src){
+  return await new Promise((resolve,reject)=>{
+    const img=new Image();
+    img.onload=()=>resolve(img);
+    img.onerror=reject;
+    img.src=src;
+  });
+}
+async function makeThumb(src){
+  if(!src)return "";
+  if(!String(src).startsWith("data:image/")) return src;
+  try{
+    const img=await loadImage(src);
+    const max=260;
+    const scale=Math.min(1,max/Math.max(img.width,img.height));
+    const w=Math.max(1,Math.round(img.width*scale));
+    const h=Math.max(1,Math.round(img.height*scale));
+    const c=document.createElement("canvas");
+    c.width=w;c.height=h;
+    const ctx=c.getContext("2d");
+    ctx.fillStyle="#fff";
+    ctx.fillRect(0,0,w,h);
+    ctx.drawImage(img,0,0,w,h);
+    return c.toDataURL("image/jpeg",0.58);
+  }catch(e){
+    console.warn("thumbnail failed",e);
+    return "";
+  }
 }
 function metadata(d,count){
   return {
@@ -168,12 +239,18 @@ function metadata(d,count){
     updatedAt:Number(d.updatedAt||Date.now())
   };
 }
+async function saveImagesIndividually(id,images){
+  await remove(ref(db,`designMedia/${id}/images`)).catch(()=>{});
+  for(let i=0;i<images.length;i++){
+    showProgress(`جاري حفظ الصورة ${i+1} من ${images.length}...`);
+    await set(ref(db,`designMedia/${id}/images/${i}`),images[i]);
+  }
+}
 
 function renderImagesPreview(){
   const wrap=$("imagesPreview");
   wrap.innerHTML="";
   const all=[...editingImages,...pendingImages];
-
   if(!all.length){
     wrap.innerHTML='<div class="hint">لم يتم اختيار صور بعد.</div>';
     return;
@@ -184,11 +261,15 @@ function renderImagesPreview(){
     item.className="multi-image-item";
 
     const img=document.createElement("img");
-    img.src=src;img.alt=`صورة ${index+1}`;
+    img.src=src;
+    img.alt=`صورة ${index+1}`;
 
     const del=document.createElement("button");
-    del.type="button";del.className="multi-image-remove";del.textContent="×";
+    del.type="button";
+    del.className="multi-image-remove";
+    del.textContent="×";
     del.onclick=()=>{
+      if(savingDesign)return;
       if(index<editingImages.length)editingImages.splice(index,1);
       else pendingImages.splice(index-editingImages.length,1);
       renderImagesPreview();
@@ -202,19 +283,18 @@ function renderImagesPreview(){
     wrap.appendChild(item);
   });
 }
+
 function refreshStats(){
   $("statCats").textContent=Object.keys(categories).length;
   $("statDesigns").textContent=Object.keys(designs).length;
   $("statActive").textContent=Object.values(designs).filter(d=>d?.active!==false).length;
   $("statFeatured").textContent=Object.values(designs).filter(d=>d?.featured).length;
 }
-async function loadThumbs(root=document){
-  for(const img of root.querySelectorAll("img[data-design-thumb]")){
-    const id=img.dataset.designThumb,d=designs[id];
-    if(!d)continue;
-    const src=await getFirstImage(id,d);
-    if(src)img.src=src;
-  }
+function thumbHtml(id,cls="thumb"){
+  const src=thumbs[id]||"";
+  return src
+    ? `<img class="${cls}" src="${esc(src)}" alt="">`
+    : `<div class="thumb-empty">بدون معاينة</div>`;
 }
 function recent(){
   const arr=Object.entries(designs)
@@ -222,10 +302,8 @@ function recent(){
     .slice(0,6);
 
   $("recentDesigns").innerHTML=arr.length?arr.map(([id,d])=>
-    `<div class="recent-item"><img data-design-thumb="${id}" alt=""><div><b>${esc(d.title||"تصميم")}</b><span>${esc(categories[d.categoryId]?.name||"-")}</span></div></div>`
+    `<div class="recent-item">${thumbHtml(id,"thumb")}<div><b>${esc(d.title||"تصميم")}</b><span>${esc(categories[d.categoryId]?.name||"-")}</span></div></div>`
   ).join(""):`<div class="hint">لا توجد تصميمات بعد.</div>`;
-
-  loadThumbs($("recentDesigns"));
 }
 function catOptions(){
   const opts=Object.entries(categories)
@@ -260,15 +338,13 @@ function renderDesigns(){
 
   $("designsBody").innerHTML=rows.length?rows.map(([id,d])=>
     `<tr>
-      <td><img class="thumb" data-design-thumb="${id}" alt=""></td>
+      <td>${thumbHtml(id)}</td>
       <td><b>${esc(d.title||"")}</b>${d.material?`<div class="hint">${esc(d.material)}</div>`:""}${Number(d.imageCount||0)>1?`<div class="hint">${d.imageCount} صور</div>`:""}</td>
       <td>${esc(categories[d.categoryId]?.name||"-")}</td>
       <td><span class="pill ${d.active===false?"off":""}">${d.active===false?"مخفي":"ظاهر"}</span>${d.featured?` <span class="pill featured">مميز</span>`:""}</td>
       <td><div class="actions"><button class="btn-soft" data-des-edit="${id}">تعديل</button><button class="btn-soft" data-des-copy="${id}">نسخ</button><button class="btn-danger" data-des-del="${id}">حذف</button></div></td>
     </tr>`
   ).join(""):`<tr><td colspan="5">لا توجد نتائج.</td></tr>`;
-
-  loadThumbs($("designsBody"));
 }
 
 onValue(ref(db,"categories"),s=>{
@@ -278,6 +354,10 @@ onValue(ref(db,"categories"),s=>{
 onValue(ref(db,"designs"),s=>{
   designs=s.val()||{};
   renderCats();refreshStats();renderDesigns();recent();
+});
+onValue(ref(db,"designThumbs"),s=>{
+  thumbs=s.val()||{};
+  renderDesigns();recent();
 });
 onValue(ref(db,"settings"),s=>{
   settings=s.val()||{};
@@ -292,10 +372,15 @@ $("categoryForm").onsubmit=async e=>{
     if(id)await update(ref(db,`categories/${id}`),data);
     else await set(push(ref(db,"categories")),data);
     resetCat();notice("تم حفظ القسم");
-  }catch(e){notice("تعذر حفظ القسم")}
+  }catch(e){
+    console.error(e);
+    notice(e?.code==="PERMISSION_DENIED"?"لا توجد صلاحية كتابة":"تعذر حفظ القسم");
+  }
 };
 function resetCat(){
-  $("catId").value="";$("catName").value="";$("catOrder").value="0";
+  $("catId").value="";
+  $("catName").value="";
+  $("catOrder").value="0";
 }
 $("catCancel").onclick=resetCat;
 
@@ -304,17 +389,21 @@ $("seedCategoriesBtn").onclick=async()=>{
   const current=new Set(Object.values(categories).map(c=>c?.name));
   let order=Object.keys(categories).length;
   try{
-    for(const name of list)if(!current.has(name))
-      await set(push(ref(db,"categories")),{name,order:order++});
+    for(const name of list){
+      if(!current.has(name))await set(push(ref(db,"categories")),{name,order:order++});
+    }
     notice("تمت إضافة الأقسام الأساسية");
   }catch(e){notice("تعذر الإضافة")}
 };
+
 $("catsBody").onclick=async e=>{
   const ed=e.target.dataset.catEdit;
   const del=e.target.dataset.catDel;
   if(ed){
     const c=categories[ed];
-    $("catId").value=ed;$("catName").value=c.name||"";$("catOrder").value=c.order||0;
+    $("catId").value=ed;
+    $("catName").value=c.name||"";
+    $("catOrder").value=c.order||0;
   }
   if(del){
     if(Object.values(designs).some(d=>d?.categoryId===del))
@@ -326,35 +415,56 @@ $("catsBody").onclick=async e=>{
 $("imageFiles").onchange=async()=>{
   const files=[...$("imageFiles").files];
   if(!files.length)return;
+
+  if(files.some(f=>f.size>8*1024*1024)){
+    alert("يوجد صورة أكبر من 8 MB. الأفضل تقليل حجم الملف قبل الرفع لتجنب فشل Firebase، مع بقاء الصورة بدون ضغط داخل الموقع.");
+  }
+
   try{
     pendingImages=[];
     for(const f of files.slice(0,Math.max(0,8-editingImages.length))){
-      notice("جاري تجهيز الصور Base64 بدون ضغط...");
+      notice(`جاري تجهيز ${f.name}...`);
       pendingImages.push(await rawBase64(f));
     }
     $("imageFiles").value="";
     renderImagesPreview();
-    notice("تم تجهيز الصور كما هي");
+    notice("تم تجهيز الصور Base64 كما هي");
   }catch(e){
-    console.error(e);notice("تعذر تجهيز إحدى الصور");
+    console.error(e);
+    notice("تعذر تجهيز إحدى الصور");
   }
 };
 
 $("designForm").onsubmit=async e=>{
   e.preventDefault();
+  if(savingDesign)return;
 
   const oldId=$("designId").value;
   const title=$("designTitle").value.trim();
   const categoryId=$("designCategory").value;
+
   if(!title||!categoryId)return alert("اكتب اسم التصميم واختار القسم.");
+
+  setSaving(true);
+  showProgress("جاري تجهيز بيانات التصميم...");
 
   try{
     const urlImages=$("imageUrls").value.split(/\n+/).map(x=>x.trim()).filter(Boolean);
+
     let images=[...editingImages,...urlImages,...pendingImages].filter(Boolean);
     images=[...new Set(images)].slice(0,8);
 
-    if(!images.length&&oldId)images=await getAllImages(oldId,designs[oldId]);
-    if(!images.length)return alert("أضف صورة واحدة على الأقل للتصميم.");
+    if(!images.length&&oldId){
+      showProgress("جاري قراءة صور التصميم الحالية...");
+      images=await getAllImages(oldId,designs[oldId]);
+    }
+    if(!images.length)throw new Error("NO_IMAGES");
+
+    const totalBytes=images.reduce((a,x)=>a+approxBytes(x),0);
+    if(totalBytes>45*1024*1024){
+      const ok=confirm(`إجمالي صور التصميم حوالي ${(totalBytes/1024/1024).toFixed(1)} MB قبل تخزين Base64. الحفظ قد يستغرق وقتاً أو يفشل حسب الاتصال. هل تريد المتابعة؟`);
+      if(!ok)throw new Error("USER_CANCEL");
+    }
 
     const r=oldId?ref(db,`designs/${oldId}`):push(ref(db,"designs"));
     const id=oldId||r.key;
@@ -373,15 +483,41 @@ $("designForm").onsubmit=async e=>{
       updatedAt:Date.now()
     },images.length);
 
-    await set(ref(db,`designMedia/${id}/images`),images);
+    // Save metadata first: lightweight and fast.
+    showProgress("جاري حفظ بيانات التصميم...");
     await set(r,data);
 
+    // Save each original Base64 image separately.
+    await saveImagesIndividually(id,images);
+
+    // Save a lightweight thumbnail for admin lists only.
+    showProgress("جاري إنشاء الصورة المصغرة...");
+    const thumb=await makeThumb(images[0]);
+    if(thumb)await set(ref(db,`designThumbs/${id}`),thumb);
+
+    showProgress("تم الحفظ بنجاح ✓");
+    notice(`تم حفظ التصميم بـ ${images.length} صورة`);
+    setTimeout(()=>showProgress("",false),1200);
     resetDesign();
-    notice(`تم حفظ التصميم بـ ${images.length} صورة Base64`);
   }catch(e){
-    console.error(e);notice("تعذر حفظ التصميم");
+    console.error(e);
+    if(e?.message==="USER_CANCEL"){
+      notice("تم إلغاء الحفظ");
+    }else if(e?.message==="NO_IMAGES"){
+      alert("أضف صورة واحدة على الأقل للتصميم.");
+      showProgress("",false);
+    }else if(e?.code==="PERMISSION_DENIED"){
+      notice("Firebase رفض الحفظ: راجع قواعد Realtime Database وتسجيل دخول الأدمن");
+      showProgress("PERMISSION_DENIED — لا توجد صلاحية كتابة",true);
+    }else{
+      notice("تعذر حفظ التصميم. تم إيقاف العملية بدون تعليق اللوحة.");
+      showProgress(`خطأ أثناء الحفظ: ${e?.message||e?.code||"غير معروف"}`,true);
+    }
+  }finally{
+    setSaving(false);
   }
 };
+
 function resetDesign(){
   ["designId","designTitle","designDescription","designMaterial","designDimensions","designPrice","imageUrls"]
     .forEach(id=>$(id).value="");
@@ -390,10 +526,16 @@ function resetDesign(){
   $("designFeatured").checked=false;
   $("designOrder").value="0";
   $("imageFiles").value="";
-  editingImages=[];pendingImages=[];
+  editingImages=[];
+  pendingImages=[];
   renderImagesPreview();
 }
-$("designCancel").onclick=resetDesign;
+
+$("designCancel").onclick=()=>{
+  if(savingDesign)return;
+  resetDesign();
+  showProgress("",false);
+};
 
 $("designsBody").onclick=async e=>{
   const ed=e.target.dataset.desEdit;
@@ -401,38 +543,63 @@ $("designsBody").onclick=async e=>{
   const del=e.target.dataset.desDel;
 
   if(ed){
-    const d=designs[ed];
-    $("designId").value=ed;
-    $("designTitle").value=d.title||"";
-    $("designCategory").value=d.categoryId||"";
-    $("designDescription").value=d.description||"";
-    $("designMaterial").value=d.material||"";
-    $("designDimensions").value=d.dimensions||"";
-    $("designPrice").value=d.price||"";
-    $("imageUrls").value="";
-    editingImages=await getAllImages(ed,d);
-    pendingImages=[];
-    renderImagesPreview();
-    $("designActive").value=d.active===false?"false":"true";
-    $("designFeatured").checked=!!d.featured;
-    $("designOrder").value=d.order||0;
-    window.scrollTo({top:0,behavior:"smooth"});
+    try{
+      const d=designs[ed];
+      $("designId").value=ed;
+      $("designTitle").value=d.title||"";
+      $("designCategory").value=d.categoryId||"";
+      $("designDescription").value=d.description||"";
+      $("designMaterial").value=d.material||"";
+      $("designDimensions").value=d.dimensions||"";
+      $("designPrice").value=d.price||"";
+      $("imageUrls").value="";
+      showProgress("جاري تحميل صور هذا التصميم فقط...");
+      editingImages=await getAllImages(ed,d);
+      pendingImages=[];
+      renderImagesPreview();
+      $("designActive").value=d.active===false?"false":"true";
+      $("designFeatured").checked=!!d.featured;
+      $("designOrder").value=d.order||0;
+      showProgress("",false);
+      document.querySelector("#designs .panel")?.scrollIntoView({behavior:"smooth",block:"start"});
+    }catch(err){
+      console.error(err);
+      notice("تعذر تحميل صور التصميم للتعديل");
+      showProgress("",false);
+    }
   }
 
   if(cp){
-    const d=designs[cp];
-    const images=await getAllImages(cp,d);
-    const nr=push(ref(db,"designs"));
-    const id=nr.key;
-    const copy=metadata({...d,title:(d.title||"تصميم")+" - نسخة",createdAt:Date.now(),updatedAt:Date.now(),featured:false},images.length);
-    await set(nr,copy);
-    if(images.length)await set(ref(db,`designMedia/${id}/images`),images);
-    notice("تم نسخ التصميم");
+    try{
+      notice("جاري نسخ التصميم...");
+      const d=designs[cp];
+      const images=await getAllImages(cp,d);
+      const nr=push(ref(db,"designs"));
+      const id=nr.key;
+      const copy=metadata({...d,title:(d.title||"تصميم")+" - نسخة",createdAt:Date.now(),updatedAt:Date.now(),featured:false},images.length);
+      await set(nr,copy);
+      await saveImagesIndividually(id,images);
+      const thumb=thumbs[cp] || await makeThumb(images[0]);
+      if(thumb)await set(ref(db,`designThumbs/${id}`),thumb);
+      notice("تم نسخ التصميم");
+      showProgress("",false);
+    }catch(err){
+      console.error(err);
+      notice("تعذر نسخ التصميم");
+      showProgress("",false);
+    }
   }
 
   if(del&&confirm("حذف التصميم نهائياً؟")){
-    await remove(ref(db,`designs/${del}`));
-    await remove(ref(db,`designMedia/${del}`)).catch(()=>{});
+    try{
+      await remove(ref(db,`designs/${del}`));
+      await remove(ref(db,`designMedia/${del}`)).catch(()=>{});
+      await remove(ref(db,`designThumbs/${del}`)).catch(()=>{});
+      notice("تم حذف التصميم");
+    }catch(err){
+      console.error(err);
+      notice("تعذر حذف التصميم");
+    }
   }
 };
 
@@ -452,11 +619,15 @@ function fillSettings(){
   $("heroSubtitle").value=settings.heroSubtitle||"استعرض التصميمات واختار الفكرة المناسبة، ثم اطلب تنفيذها مباشرة من ورشة النمر.";
   $("defaultMessage").value=settings.defaultMessage||"مرحباً، أريد طلب تصميم أثاث من ورشة النمر";
   $("footerText").value=settings.footerText||"ورشة النمر للأثاث المنزلي - جميع الحقوق محفوظة";
+
   if(settings.logo){
     $("logoPreview").src=settings.logo;
     $("logoPreview").style.display="block";
-  }else $("logoPreview").style.display="none";
+  }else{
+    $("logoPreview").style.display="none";
+  }
 }
+
 $("logoFile").onchange=async()=>{
   const f=$("logoFile").files[0];
   if(f){
@@ -464,12 +635,14 @@ $("logoFile").onchange=async()=>{
     $("logoPreview").style.display="block";
   }
 };
+
 $("logoUrl").oninput=()=>{
   if($("logoUrl").value){
     $("logoPreview").src=$("logoUrl").value;
     $("logoPreview").style.display="block";
   }
 };
+
 $("settingsForm").onsubmit=async e=>{
   e.preventDefault();
   try{
@@ -490,11 +663,14 @@ $("settingsForm").onsubmit=async e=>{
       defaultMessage:$("defaultMessage").value.trim(),
       footerText:$("footerText").value.trim()
     });
-
     notice("تم حفظ الإعدادات");
-  }catch(e){notice("تعذر حفظ الإعدادات")}
+  }catch(e){
+    console.error(e);
+    notice("تعذر حفظ الإعدادات");
+  }
 };
 
+// One-time migration: keeps originals untouched, but moves them out of metadata.
 $("progressiveBtn").onclick=async()=>{
   if(!confirm("تأكد أنك حمّلت نسخة احتياطية أولاً. سيتم فصل صور Base64 عن بيانات المنتجات بدون ضغط أو تغيير. متابعة؟"))return;
 
@@ -508,35 +684,87 @@ $("progressiveBtn").onclick=async()=>{
       let images=legacyImages(d);
       if(!images.length)images=await getAllImages(id,d);
 
-      if(images.length)await set(ref(db,`designMedia/${id}/images`),images);
+      if(images.length){
+        await saveImagesIndividually(id,images);
+        const thumb=thumbs[id]||await makeThumb(images[0]);
+        if(thumb)await set(ref(db,`designThumbs/${id}`),thumb);
+      }
       await set(ref(db,`designs/${id}`),metadata(d,images.length));
 
       done++;
       notice(`جاري التفعيل ${done}/${entries.length}`);
     }
 
+    showProgress("",false);
     notice("تم تفعيل التحميل التدريجي بنجاح");
   }catch(e){
     console.error(e);
+    showProgress("",false);
     notice("حدث خطأ. يمكن تشغيل الزر مرة أخرى.");
+  }
+};
+
+// Build missing thumbnails only when user asks, avoiding heavy reads on every admin load.
+$("repairThumbsBtn").onclick=async()=>{
+  if(!confirm("سيتم قراءة الصورة الأولى فقط من كل تصميم لا توجد له صورة مصغرة. متابعة؟"))return;
+
+  const entries=Object.entries(designs);
+  let done=0,created=0;
+
+  try{
+    for(const [id,d] of entries){
+      done++;
+      if(thumbs[id]){
+        notice(`فحص الصور المصغرة ${done}/${entries.length}`);
+        continue;
+      }
+
+      notice(`إنشاء صورة مصغرة ${done}/${entries.length}`);
+      const first=await getImageAt(id,0,d);
+      if(!first)continue;
+
+      const thumb=await makeThumb(first);
+      if(thumb){
+        await set(ref(db,`designThumbs/${id}`),thumb);
+        created++;
+      }
+    }
+    notice(`تم الانتهاء — تم إنشاء ${created} صورة مصغرة`);
+  }catch(e){
+    console.error(e);
+    notice("حدث خطأ أثناء إصلاح الصور المصغرة");
   }
 };
 
 $("exportBtn").onclick=async()=>{
   try{
-    const media=(await get(ref(db,"designMedia"))).val()||{};
+    notice("جاري تجهيز النسخة الاحتياطية...");
+    const [mediaSnap,thumbSnap]=await Promise.all([
+      get(ref(db,"designMedia")),
+      get(ref(db,"designThumbs"))
+    ]);
+
     const blob=new Blob([JSON.stringify({
       exportedAt:new Date().toISOString(),
-      categories,designs,designMedia:media,settings
+      categories,
+      designs,
+      designMedia:mediaSnap.val()||{},
+      designThumbs:thumbSnap.val()||{},
+      settings
     },null,2)],{type:"application/json"});
 
     const a=document.createElement("a");
     a.href=URL.createObjectURL(blob);
-    a.download=`elnemer-progressive-backup-${new Date().toISOString().slice(0,10)}.json`;
+    a.download=`elnemer-backup-${new Date().toISOString().slice(0,10)}.json`;
     a.click();
-    URL.revokeObjectURL(a.href);
-  }catch(e){notice("تعذر إنشاء النسخة الاحتياطية")}
+    setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+    notice("تم تجهيز النسخة الاحتياطية");
+  }catch(e){
+    console.error(e);
+    notice("تعذر إنشاء النسخة الاحتياطية");
+  }
 };
+
 $("importBtn").onclick=async()=>{
   const f=$("importFile").files[0];
   if(!f)return alert("اختار ملف JSON أولاً.");
@@ -547,9 +775,13 @@ $("importBtn").onclick=async()=>{
     await set(ref(db,"categories"),data.categories||{});
     await set(ref(db,"designs"),data.designs||{});
     await set(ref(db,"designMedia"),data.designMedia||{});
+    await set(ref(db,"designThumbs"),data.designThumbs||{});
     await set(ref(db,"settings"),data.settings||{});
     notice("تم استيراد النسخة");
-  }catch(e){notice("الملف غير صالح")}
+  }catch(e){
+    console.error(e);
+    notice("الملف غير صالح");
+  }
 };
 
 </script>
