@@ -60,10 +60,12 @@
 
 <section id="categories" class="page"><div class="page-head"><div><h2>الأقسام</h2><p>إدارة تصنيفات الأثاث المعروضة للعميل</p></div></div><div class="panel"><form id="categoryForm" class="form-grid"><input id="catId" type="hidden"><div class="field"><label>اسم القسم</label><input id="catName" class="input" required></div><div class="field"><label>الترتيب</label><input id="catOrder" class="input" type="number" value="0"></div><div class="full row-actions"><button class="btn btn-dark">حفظ القسم</button><button id="catCancel" class="btn btn-soft" type="button">إلغاء</button><button id="seedCategoriesBtn" class="btn btn-soft" type="button">إضافة الأقسام الأساسية</button></div></form></div><div class="panel"><div class="table-wrap"><table><thead><tr><th>القسم</th><th>التصميمات</th><th>الترتيب</th><th>إجراءات</th></tr></thead><tbody id="catsBody"></tbody></table></div></div></section>
 
-<section id="designs" class="page"><div class="page-head"><div><h2>التصميمات</h2><p>إضافة وتعديل وعرض التصميمات داخل الموقع</p></div></div><div class="panel"><form id="designForm" class="form-grid"><input id="designId" type="hidden"><div class="field"><label>اسم التصميم</label><input id="designTitle" class="input" required></div><div class="field"><label>القسم</label><select id="designCategory" class="input" required></select></div><div class="field full"><label>الوصف</label><textarea id="designDescription" class="input"></textarea></div><div class="field"><label>الخامة</label><input id="designMaterial" class="input" placeholder="مثال: خشب زان"></div><div class="field"><label>المقاس</label><input id="designDimensions" class="input" placeholder="مثال: حسب الطلب"></div><div class="field"><label>السعر / عبارة السعر</label><input id="designPrice" class="input" placeholder="مثال: حسب المقاس"></div><div class="field full"><label>روابط الصور (اختياري)</label><textarea id="imageUrls" class="input" placeholder="ضع كل رابط صورة في سطر منفصل&#10;https://...&#10;https://..."></textarea></div>
+<section id="designs" class="page"><div class="page-head"><div><h2>التصميمات</h2><p>إضافة وتعديل وعرض التصميمات داخل الموقع</p></div></div><div class="panel"><form id="designForm" class="form-grid"><input id="designId" type="hidden"><div class="field"><label>اسم التصميم</label><input id="designTitle" class="input" required></div>
+<div class="field"><label>كود التصميم</label><input id="designCode" class="input" placeholder="يُنشأ تلقائياً عند الحفظ" readonly></div>
+<div class="field"><label>القسم</label><select id="designCategory" class="input" required></select></div><div class="field full"><label>الوصف</label><textarea id="designDescription" class="input"></textarea></div><div class="field"><label>الخامة</label><input id="designMaterial" class="input" placeholder="مثال: خشب زان"></div><div class="field"><label>المقاس</label><input id="designDimensions" class="input" placeholder="مثال: حسب الطلب"></div><div class="field"><label>السعر / عبارة السعر</label><input id="designPrice" class="input" placeholder="مثال: حسب المقاس"></div><div class="field full"><label>روابط الصور (اختياري)</label><textarea id="imageUrls" class="input" placeholder="ضع كل رابط صورة في سطر منفصل&#10;https://...&#10;https://..."></textarea></div>
 <div class="field full"><label>أو ارفع عدة صور من الجهاز</label><input id="imageFiles" class="input" type="file" accept="image/*" multiple><div class="hint">يمكنك تحديد أكثر من صورة مرة واحدة. الحد المقترح 8 صور لكل تصميم.</div></div>
 <div class="field full"><div class="image-help">الصورة الأولى ستكون الصورة الرئيسية في بطاقة التصميم، وباقي الصور ستظهر داخل معرض الصور عند فتح التفاصيل.</div></div>
-<div class="field full"><label>الصور الحالية / المختارة</label><div id="imagesPreview" class="multi-images"></div></div><div class="field"><label>الحالة</label><select id="designActive" class="input"><option value="true">ظاهر</option><option value="false">مخفي</option></select></div><div class="field"><label>الترتيب</label><input id="designOrder" class="input" type="number" value="0"></div><div class="field full"><label class="switch"><input id="designFeatured" type="checkbox"><span><b>تصميم مميز</b><br><small>يظهر في قسم مختارات ورشة النمر وقد يظهر في الواجهة</small></span></label></div><div class="full row-actions"><button id="saveDesignBtn" class="btn btn-dark">حفظ التصميم</button><button id="designCancel" class="btn btn-soft" type="button">إلغاء</button></div><div id="saveProgress" class="save-progress full"></div></form></div><div class="panel"><div class="toolbar"><input id="search" class="input" placeholder="بحث..."><select id="filterCategory" class="input"><option value="all">كل الأقسام</option></select><select id="filterState" class="input"><option value="all">كل الحالات</option><option value="active">ظاهر</option><option value="hidden">مخفي</option><option value="featured">مميز</option></select></div><div class="table-wrap"><table><thead><tr><th>الصورة</th><th>التصميم</th><th>القسم</th><th>الحالة</th><th>إجراءات</th></tr></thead><tbody id="designsBody"></tbody></table></div></div></section>
+<div class="field full"><label>الصور الحالية / المختارة</label><div id="imagesPreview" class="multi-images"></div></div><div class="field"><label>الحالة</label><select id="designActive" class="input"><option value="true">ظاهر</option><option value="false">مخفي</option></select></div><div class="field"><label>الترتيب</label><input id="designOrder" class="input" type="number" value="0"></div><div class="field full"><label class="switch"><input id="designFeatured" type="checkbox"><span><b>تصميم مميز</b><br><small>يظهر في قسم مختارات ورشة النمر وقد يظهر في الواجهة</small></span></label></div><div class="full row-actions"><button id="saveDesignBtn" class="btn btn-dark">حفظ التصميم</button><button id="designCancel" class="btn btn-soft" type="button">إلغاء</button></div><div id="saveProgress" class="save-progress full"></div></form></div><div class="panel"><div class="toolbar"><input id="search" class="input" placeholder="بحث..."><select id="filterCategory" class="input"><option value="all">كل الأقسام</option></select><select id="filterState" class="input"><option value="all">كل الحالات</option><option value="active">ظاهر</option><option value="hidden">مخفي</option><option value="featured">مميز</option></select></div><div class="table-wrap"><table><thead><tr><th>الصورة</th><th>الكود</th><th>التصميم</th><th>القسم</th><th>الحالة</th><th>إجراءات</th></tr></thead><tbody id="designsBody"></tbody></table></div></div></section>
 
 <section id="settings" class="page"><div class="page-head"><div><h2>إعدادات الموقع</h2><p>بيانات التواصل والهوية التي تظهر للعميل</p></div></div><div class="panel"><form id="settingsForm" class="form-grid"><div class="field"><label>اسم الموقع</label><input id="siteName" class="input"></div><div class="field"><label>رقم واتساب بصيغة دولية</label><input id="whatsapp" class="input"></div><div class="field"><label>رقم الموبايل</label><input id="phone" class="input"></div><div class="field"><label>العنوان</label><input id="address" class="input"></div><div class="field full"><label>صفحة فيسبوك</label><input id="facebook" class="input" type="url"></div><div class="field"><label>رابط اللوجو</label><input id="logoUrl" class="input" type="url"></div><div class="field"><label>أو رفع اللوجو</label><input id="logoFile" class="input" type="file" accept="image/*"></div><div class="field full"><img id="logoPreview" class="preview" alt=""></div><div class="field full"><label>عنوان الواجهة</label><input id="heroTitle" class="input"></div><div class="field full"><label>وصف الواجهة</label><textarea id="heroSubtitle" class="input"></textarea></div><div class="field full"><label>رسالة واتساب الافتراضية</label><input id="defaultMessage" class="input"></div><div class="field full"><label>نص الحقوق</label><input id="footerText" class="input"></div><div class="full"><button class="btn btn-dark">حفظ الإعدادات</button></div></form></div></section>
 
@@ -71,6 +73,7 @@
     <div style="height:12px"></div>
     <button id="progressiveBtn" class="btn btn-soft" type="button">تفعيل التحميل التدريجي</button>
     <button id="repairThumbsBtn" class="btn btn-soft" type="button" style="margin-inline-start:7px">إصلاح الصور المصغرة</button>
+    <button id="repairCodesBtn" class="btn btn-soft" type="button" style="margin-inline-start:7px">إنشاء أكواد للتصميمات القديمة</button>
     <p class="hint" style="margin-top:8px">شغّلها مرة واحدة بعد تنزيل النسخة الاحتياطية. صور Base64 ستظل كما هي بدون ضغط أو تغيير جودة، لكن سيتم فصلها عن بيانات المنتجات.</p></div><div class="panel"><h3>استيراد نسخة</h3><input id="importFile" class="input" type="file" accept=".json,application/json"><button id="importBtn" class="btn btn-danger" style="margin-top:8px">استيراد البيانات</button></div></section>
 </main></div></div></div>
 <div id="notice" class="notice"></div>
@@ -79,7 +82,7 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
-import { getDatabase, ref, onValue, set, push, update, remove, get } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js";
+import { getDatabase, ref, onValue, set, push, update, remove, get, runTransaction } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDX9iXtbze2_bkf2TqnoEqnm5iWln-17lE",
@@ -222,8 +225,30 @@ async function makeThumb(src){
     return "";
   }
 }
+
+function normalizeCodeNumber(n){
+  return String(Number(n)||0).padStart(4,"0");
+}
+async function nextDesignCode(){
+  const counterRef=ref(db,"counters/designCode");
+  const result=await runTransaction(counterRef,current=>{
+    const n=Number(current||0);
+    return n+1;
+  });
+  if(!result.committed)throw new Error("CODE_COUNTER_FAILED");
+  const n=Number(result.snapshot.val()||0);
+  return `NMR-${normalizeCodeNumber(n)}`;
+}
+async function ensureDesignCode(id,d={}){
+  if(d.code)return d.code;
+  const code=await nextDesignCode();
+  await update(ref(db,`designs/${id}`),{code});
+  return code;
+}
+
 function metadata(d,count){
   return {
+    code:d.code||"",
     title:d.title||"",
     categoryId:d.categoryId||"",
     description:d.description||"",
@@ -339,12 +364,13 @@ function renderDesigns(){
   $("designsBody").innerHTML=rows.length?rows.map(([id,d])=>
     `<tr>
       <td>${thumbHtml(id)}</td>
+      <td><b style="font-family:monospace">${esc(d.code||"—")}</b></td>
       <td><b>${esc(d.title||"")}</b>${d.material?`<div class="hint">${esc(d.material)}</div>`:""}${Number(d.imageCount||0)>1?`<div class="hint">${d.imageCount} صور</div>`:""}</td>
       <td>${esc(categories[d.categoryId]?.name||"-")}</td>
       <td><span class="pill ${d.active===false?"off":""}">${d.active===false?"مخفي":"ظاهر"}</span>${d.featured?` <span class="pill featured">مميز</span>`:""}</td>
       <td><div class="actions"><button class="btn-soft" data-des-edit="${id}">تعديل</button><button class="btn-soft" data-des-copy="${id}">نسخ</button><button class="btn-danger" data-des-del="${id}">حذف</button></div></td>
     </tr>`
-  ).join(""):`<tr><td colspan="5">لا توجد نتائج.</td></tr>`;
+  ).join(""):`<tr><td colspan="6">لا توجد نتائج.</td></tr>`;
 }
 
 onValue(ref(db,"categories"),s=>{
@@ -469,7 +495,14 @@ $("designForm").onsubmit=async e=>{
     const r=oldId?ref(db,`designs/${oldId}`):push(ref(db,"designs"));
     const id=oldId||r.key;
 
+    let designCode=oldId?(designs[oldId]?.code||""):"";
+    if(!designCode){
+      showProgress("جاري إنشاء كود التصميم...");
+      designCode=await nextDesignCode();
+    }
+
     const data=metadata({
+      code:designCode,
       title,
       categoryId,
       description:$("designDescription").value.trim(),
@@ -519,7 +552,7 @@ $("designForm").onsubmit=async e=>{
 };
 
 function resetDesign(){
-  ["designId","designTitle","designDescription","designMaterial","designDimensions","designPrice","imageUrls"]
+  ["designId","designCode","designTitle","designDescription","designMaterial","designDimensions","designPrice","imageUrls"]
     .forEach(id=>$(id).value="");
   $("designCategory").value="";
   $("designActive").value="true";
@@ -546,6 +579,7 @@ $("designsBody").onclick=async e=>{
     try{
       const d=designs[ed];
       $("designId").value=ed;
+      $("designCode").value=d.code||"";
       $("designTitle").value=d.title||"";
       $("designCategory").value=d.categoryId||"";
       $("designDescription").value=d.description||"";
@@ -576,7 +610,8 @@ $("designsBody").onclick=async e=>{
       const images=await getAllImages(cp,d);
       const nr=push(ref(db,"designs"));
       const id=nr.key;
-      const copy=metadata({...d,title:(d.title||"تصميم")+" - نسخة",createdAt:Date.now(),updatedAt:Date.now(),featured:false},images.length);
+      const newCode=await nextDesignCode();
+      const copy=metadata({...d,code:newCode,title:(d.title||"تصميم")+" - نسخة",createdAt:Date.now(),updatedAt:Date.now(),featured:false},images.length);
       await set(nr,copy);
       await saveImagesIndividually(id,images);
       const thumb=thumbs[cp] || await makeThumb(images[0]);
@@ -733,6 +768,30 @@ $("repairThumbsBtn").onclick=async()=>{
   }catch(e){
     console.error(e);
     notice("حدث خطأ أثناء إصلاح الصور المصغرة");
+  }
+};
+
+
+$("repairCodesBtn").onclick=async()=>{
+  const missing=Object.entries(designs).filter(([,d])=>!d?.code);
+  if(!missing.length){
+    notice("كل التصميمات لها أكواد بالفعل");
+    return;
+  }
+  if(!confirm(`سيتم إنشاء كود خاص لـ ${missing.length} تصميم قديم. متابعة؟`))return;
+
+  let done=0;
+  try{
+    for(const [id,d] of missing){
+      const code=await nextDesignCode();
+      await update(ref(db,`designs/${id}`),{code});
+      done++;
+      notice(`إنشاء الأكواد ${done}/${missing.length} — ${code}`);
+    }
+    notice(`تم إنشاء ${done} كود للتصميمات القديمة`);
+  }catch(e){
+    console.error(e);
+    notice("حدث خطأ أثناء إنشاء الأكواد");
   }
 };
 
